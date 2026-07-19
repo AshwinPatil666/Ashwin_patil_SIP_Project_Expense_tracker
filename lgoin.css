@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *{
     margin: 0;
     padding: 0;
@@ -90,3 +91,35 @@ button:hover{
     text-decoration: none;
     font-weight: bold;
 }
+=======
+
+.logo img{
+
+    width:180px;
+
+}
+
+body{
+
+    background:linear-gradient(170deg,white,#ffffff,#07e95a);
+
+    min-height:100vh;
+
+
+}
+.login_page{
+    background-color: ;
+    position :relative;
+    top:10%;
+    left:35%;
+    border:solid 1px green ;
+   border-radius:20px;
+    height:300px;
+    width:250px;
+    box-shadow:0 20px 40px rgba(113, 221, 18, 0.25);
+    padding-top: 5%;
+    display:flex;
+    justify-content:center;
+
+}
+>>>>>>> 04366ca (add more files)
