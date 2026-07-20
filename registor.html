@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | SpendWise</title>
+    <link rel ="stylesheet" href ="registor.css">
+</head>
+<body>
+    <div class="registration">
+        
+        <div class="logo">
+            <img src="logo.jpeg" alt="SpendWise Logo">
+        </div>
+
+        <h2>Create New Account</h2>
+        <form action="" method ="post">
+            <label for ="name" >Your Name</label>
+            <input type="text"
+            id="name"
+            name="name"
+            placeholder="Enter your name"
+            autocomplete="name"
+            required >
+
+            <label for ="email">Enter Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                autocomplete="email"
+                required
+            >
+             <label for="New_password">New Password</label>
+            <input
+                type="password"
+                id="New_password"
+                name="password"
+                placeholder="Enter your password"
+                autocomplete="new-password"
+                required
+            >
+             <label for="Confirm_password">Confirm Password</label>
+            <input
+                type="password"
+                id="Confirm_password"
+                name="Confirm_password"
+                placeholder="Confirm password"
+                autocomplete="new-password"
+                required
+            >
+            <input type="checkbox" id="terms" required>
+                  <label for="terms">
+                      I agree to the Terms & Conditions
+                   </label> 
+            <button type="submit">Create Account</button>
+                    <p>Or</p>
+             <button type="button">
+                    Sign in with Google
+                </button>
+
+<p>
+    Already have an account?
+    <a href="login.html">Login</a>
+</p>
+        </form>
+         
+
+    </div>
+</body>
+</html>

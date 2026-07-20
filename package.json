@@ -18,8 +18,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "express": "^5.2.1",
-    "nodemon": "^3.1.14",
-    "nodeone": "^1.0.0"
+    "@angular/cli": "^22.0.7",
+    "express": "^5.2.1"
   }
 }
