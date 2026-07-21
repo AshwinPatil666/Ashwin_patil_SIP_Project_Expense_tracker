@@ -1,0 +1,27 @@
+.navbar{
+
+    width:95%;
+
+    margin:20px auto;
+
+    padding:15px 40px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    background:white;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+
+    position:sticky;
+
+    top:10px;
+
+    z-index:100;
+
+}
