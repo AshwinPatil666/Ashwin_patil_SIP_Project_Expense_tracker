@@ -1,0 +1,796 @@
+/*==================================================
+                GOOGLE FONT
+==================================================*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/*==================================================
+                CSS VARIABLES
+==================================================*/
+
+:root{
+
+    --primary:#22c55e;
+    --primary-dark:#15803d;
+    --primary-light:#86efac;
+
+    --bg-dark:#050816;
+    --bg-green:#052e16;
+
+    --white:#ffffff;
+
+    --text:#e5e7eb;
+    --text-light:#9ca3af;
+
+    --card:rgba(255,255,255,.08);
+
+    --border:rgba(255,255,255,.12);
+
+    --shadow:0 15px 35px rgba(0,0,0,.45);
+
+    --radius:20px;
+
+    --transition:.35s ease;
+
+}
+
+/*==================================================
+                    RESET
+==================================================*/
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    min-height:100vh;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--bg-dark),
+        #071b13,
+        var(--bg-green)
+    );
+
+    color:var(--white);
+
+}
+
+/*==================================================
+                MAIN CONTAINER
+==================================================*/
+
+.reports-page{
+
+    width:min(1400px,92%);
+    margin:auto;
+    padding:40px 0;
+
+}
+
+/*==================================================
+                GLASS CARDS
+==================================================*/
+
+.report-card,
+.report-filter,
+.chart-card,
+.report-table,
+.insight-card,
+.recommendation-card{
+
+    background:var(--card);
+
+    backdrop-filter:blur(18px);
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+}
+
+/*==================================================
+                PAGE HEADER
+==================================================*/
+
+.page-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:35px;
+
+}
+
+.page-header h1{
+
+    font-size:38px;
+    margin-bottom:10px;
+
+}
+
+.page-header p{
+
+    color:var(--text-light);
+
+}
+
+.header-buttons{
+
+    display:flex;
+    gap:15px;
+
+}
+
+/*==================================================
+                BUTTONS
+==================================================*/
+
+.pdf-btn,
+.csv-btn,
+.filter-btn{
+
+    border:none;
+
+    cursor:pointer;
+
+    padding:14px 28px;
+
+    border-radius:14px;
+
+    color:var(--white);
+
+    font-size:15px;
+
+    font-weight:600;
+
+    transition:var(--transition);
+
+}
+
+.pdf-btn{
+
+    background:
+    linear-gradient(
+        135deg,
+        #dc2626,
+        #991b1b
+    );
+
+}
+
+.csv-btn,
+.filter-btn{
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary-dark)
+    );
+
+}
+
+.pdf-btn:hover,
+.csv-btn:hover,
+.filter-btn:hover{
+
+    transform:translateY(-4px);
+
+}
+
+/*==================================================
+                SUMMARY GRID
+==================================================*/
+
+.report-summary{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:25px;
+
+    margin-bottom:35px;
+
+}
+
+/*==================================================
+                SUMMARY CARD
+==================================================*/
+
+.report-card{
+
+    position:relative;
+
+    overflow:hidden;
+
+    padding:30px;
+
+    transition:var(--transition);
+
+}
+
+.report-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:5px;
+
+    background:
+    linear-gradient(
+        to right,
+        var(--primary-light),
+        var(--primary)
+    );
+
+}
+
+.report-card:hover{
+
+    transform:translateY(-8px);
+
+    border-color:rgba(34,197,94,.4);
+
+}
+
+.report-card h3{
+
+    color:var(--text-light);
+
+    margin-bottom:15px;
+
+    font-size:15px;
+
+}
+
+.report-card h2{
+
+    font-size:34px;
+
+    color:var(--white);
+
+}
+
+/*==================================================
+                FILTER SECTION
+==================================================*/
+
+.report-filter{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+
+    padding:25px;
+
+    margin-bottom:35px;
+
+}
+
+.report-filter input,
+.report-filter select{
+
+    width:100%;
+
+    padding:14px 18px;
+
+    border:1px solid var(--border);
+
+    outline:none;
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,.08);
+
+    color:var(--white);
+
+    transition:var(--transition);
+
+}
+
+.report-filter input:focus,
+.report-filter select:focus{
+
+    border-color:var(--primary);
+
+    box-shadow:0 0 12px rgba(34,197,94,.25);
+
+}
+
+.report-filter select option{
+
+    background:#0b1f15;
+
+    color:var(--white);
+
+}
+
+/*==================================================
+                CHART SECTION
+==================================================*/
+
+.charts{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:25px;
+
+    margin-bottom:35px;
+
+}
+
+.chart-card{
+
+    padding:30px;
+
+    min-height:350px;
+
+    transition:var(--transition);
+
+}
+
+.chart-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.chart-card h2{
+
+    margin-bottom:20px;
+
+    color:var(--white);
+
+}
+
+/*==================================================
+                RESPONSIVE
+==================================================*/
+
+@media(max-width:992px){
+
+    .report-summary{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+    .charts{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:700px){
+
+    .page-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:20px;
+
+    }
+
+    .header-buttons{
+
+        width:100%;
+
+        flex-direction:column;
+
+    }
+
+    .pdf-btn,
+    .csv-btn{
+
+        width:100%;
+
+    }
+
+    .report-summary{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .report-filter{
+
+        grid-template-columns:1fr;
+
+    }
+
+}/*==================================================
+                REPORT TABLE
+==================================================*/
+
+.report-table{
+
+    padding:30px;
+
+    margin-bottom:35px;
+
+    overflow-x:auto;
+
+}
+
+.report-table h2{
+
+    margin-bottom:20px;
+
+    color:var(--white);
+
+}
+
+.report-table table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.report-table thead{
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary-dark)
+    );
+
+}
+
+.report-table th{
+
+    padding:18px;
+
+    text-align:left;
+
+    color:var(--white);
+
+    font-size:15px;
+
+    font-weight:600;
+
+}
+
+.report-table td{
+
+    padding:18px;
+
+    color:var(--text);
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.report-table tbody tr{
+
+    transition:var(--transition);
+
+}
+
+.report-table tbody tr:nth-child(even){
+
+    background:rgba(255,255,255,.03);
+
+}
+
+.report-table tbody tr:hover{
+
+    background:rgba(34,197,94,.10);
+
+}
+
+
+/*==================================================
+                STATUS BADGES
+==================================================*/
+
+.status-completed{
+
+    display:inline-block;
+
+    padding:6px 14px;
+
+    border-radius:50px;
+
+    background:rgba(34,197,94,.18);
+
+    color:#86efac;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.status-pending{
+
+    display:inline-block;
+
+    padding:6px 14px;
+
+    border-radius:50px;
+
+    background:rgba(245,158,11,.18);
+
+    color:#fde68a;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.status-failed{
+
+    display:inline-block;
+
+    padding:6px 14px;
+
+    border-radius:50px;
+
+    background:rgba(220,38,38,.18);
+
+    color:#fca5a5;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+
+/*==================================================
+                BOTTOM SECTION
+==================================================*/
+
+.report-bottom{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:25px;
+
+}
+
+
+/*==================================================
+                INSIGHT CARD
+==================================================*/
+
+.insight-card{
+
+    padding:30px;
+
+}
+
+.insight-card h2{
+
+    margin-bottom:20px;
+
+}
+
+.insight-card ul{
+
+    list-style:none;
+
+}
+
+.insight-card li{
+
+    padding:16px 0;
+
+    color:var(--text);
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+    transition:var(--transition);
+
+}
+
+.insight-card li:last-child{
+
+    border-bottom:none;
+
+}
+
+.insight-card li:hover{
+
+    color:var(--primary-light);
+
+    padding-left:10px;
+
+}
+
+
+/*==================================================
+            RECOMMENDATION CARD
+==================================================*/
+
+.recommendation-card{
+
+    padding:30px;
+
+}
+
+.recommendation-card h2{
+
+    margin-bottom:20px;
+
+}
+
+.recommendation-card ul{
+
+    list-style:none;
+
+}
+
+.recommendation-card li{
+
+    padding:16px 0;
+
+    color:var(--text);
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+    transition:var(--transition);
+
+}
+
+.recommendation-card li:last-child{
+
+    border-bottom:none;
+
+}
+
+.recommendation-card li:hover{
+
+    color:var(--primary-light);
+
+    padding-left:10px;
+
+}
+
+
+/*==================================================
+                PREMIUM SCROLLBAR
+==================================================*/
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+    height:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#07150d;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:var(--primary);
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:var(--primary-light);
+
+}
+
+
+/*==================================================
+                TEXT SELECTION
+==================================================*/
+
+::selection{
+
+    background:var(--primary);
+
+    color:var(--white);
+
+}
+
+
+/*==================================================
+                PAGE ANIMATION
+==================================================*/
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(25px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+.report-card,
+.report-filter,
+.chart-card,
+.report-table,
+.insight-card,
+.recommendation-card{
+
+    animation:fadeUp .7s ease;
+
+}
+
+
+/*==================================================
+                RESPONSIVE
+==================================================*/
+
+@media(max-width:900px){
+
+    .report-bottom{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:650px){
+
+    .report-table{
+
+        padding:18px;
+
+    }
+
+    .report-table table{
+
+        min-width:750px;
+
+    }
+
+}

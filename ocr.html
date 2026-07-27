@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpendWise | OCR Scanner</title>
+    <link rel="stylesheet" href="ocr.css">
+</head>
+<body>
+
+<main class="ocr-page">
+
+    <!--============================
+            PAGE HEADER
+    =============================-->
+
+    <section class="page-header">
+
+        <div>
+
+            <h1>Receipt OCR Scanner</h1>
+
+            <p>Upload or scan your receipt to extract expense details automatically.</p>
+
+        </div>
+
+        <button class="scan-btn">
+
+            📷 Scan Receipt
+
+        </button>
+
+    </section>
+
+    <!--============================
+            UPLOAD SECTION
+    =============================-->
+
+    <section class="upload-section">
+
+        <div class="upload-card">
+
+            <h2>Upload Receipt</h2>
+
+            <div class="drop-zone">
+
+                <p>📄 Drag & Drop Receipt</p>
+
+                <span>or</span>
+
+                <input type="file" accept="image/*,.pdf">
+
+            </div>
+
+        </div>
+
+        <div class="preview-card">
+
+            <h2>Receipt Preview</h2>
+
+            <div class="receipt-preview">
+
+                Image Preview
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!--============================
+            OCR RESULT
+    =============================-->
+
+    <section class="ocr-result">
+
+        <h2>Extracted Information</h2>
+
+        <table>
+
+            <tbody>
+
+                <tr>
+
+                    <td>Merchant</td>
+
+                    <td><input type="text" value="Domino's Pizza"></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Date</td>
+
+                    <td><input type="date"></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Category</td>
+
+                    <td>
+
+                        <select>
+
+                            <option>Food</option>
+                            <option>Shopping</option>
+                            <option>Travel</option>
+                            <option>Bills</option>
+
+                        </select>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Payment</td>
+
+                    <td>
+
+                        <select>
+
+                            <option>UPI</option>
+                            <option>Cash</option>
+                            <option>Card</option>
+
+                        </select>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Amount</td>
+
+                    <td><input type="number" value="450"></td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <!--============================
+            AI CONFIDENCE
+    =============================-->
+
+    <section class="confidence-card">
+
+        <h2>OCR Confidence</h2>
+
+        <div class="confidence-bar">
+
+            <div class="confidence-fill"></div>
+
+        </div>
+
+        <span>96% Accurate</span>
+
+    </section>
+
+    <!--============================
+            ACTION BUTTONS
+    =============================-->
+
+    <section class="action-buttons">
+
+        <button class="save-btn">
+
+            Save Expense
+
+        </button>
+
+        <button class="clear-btn">
+
+            Clear
+
+        </button>
+
+    </section>
+
+</main>
+
+</body>
+</html>

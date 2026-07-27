@@ -1,0 +1,615 @@
+/*==================================================
+                GOOGLE FONT
+==================================================*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/*==================================================
+                VARIABLES
+==================================================*/
+
+:root{
+
+    --primary:#22c55e;
+    --primary-dark:#15803d;
+    --primary-light:#86efac;
+
+    --bg-dark:#050816;
+    --bg-green:#052e16;
+
+    --white:#ffffff;
+
+    --text:#e5e7eb;
+    --text-light:#9ca3af;
+
+    --card:rgba(255,255,255,.08);
+
+    --border:rgba(255,255,255,.12);
+
+    --shadow:0 15px 35px rgba(0,0,0,.45);
+
+    --radius:20px;
+
+    --transition:.35s ease;
+
+}
+
+/*==================================================
+                    RESET
+==================================================*/
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+
+}
+
+body{
+
+    min-height:100vh;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--bg-dark),
+        #071b13,
+        var(--bg-green)
+    );
+
+    color:var(--white);
+
+}
+
+.ocr-page{
+
+    width:min(1400px,92%);
+
+    margin:auto;
+
+    padding:40px 0;
+
+}
+
+/*==================================================
+                GLASS CARD
+==================================================*/
+
+.upload-card,
+.preview-card,
+.ocr-result,
+.confidence-card{
+
+    background:var(--card);
+
+    backdrop-filter:blur(18px);
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+}
+
+/*==================================================
+                PAGE HEADER
+==================================================*/
+
+.page-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:35px;
+
+}
+
+.page-header h1{
+
+    font-size:38px;
+
+    margin-bottom:10px;
+
+}
+
+.page-header p{
+
+    color:var(--text-light);
+
+}
+
+/*==================================================
+                BUTTON
+==================================================*/
+
+.scan-btn{
+
+    border:none;
+
+    cursor:pointer;
+
+    padding:14px 28px;
+
+    border-radius:14px;
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary-dark)
+    );
+
+    transition:var(--transition);
+
+}
+
+.scan-btn:hover{
+
+    transform:translateY(-4px);
+
+}
+
+/*==================================================
+                UPLOAD GRID
+==================================================*/
+
+.upload-section{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:25px;
+
+    margin-bottom:35px;
+
+}
+
+/*==================================================
+                UPLOAD CARD
+==================================================*/
+
+.upload-card,
+.preview-card{
+
+    padding:30px;
+
+}
+
+.upload-card h2,
+.preview-card h2{
+
+    margin-bottom:20px;
+
+}
+
+/*==================================================
+                DROP ZONE
+==================================================*/
+
+.drop-zone{
+
+    border:2px dashed var(--primary);
+
+    border-radius:16px;
+
+    padding:50px 20px;
+
+    text-align:center;
+
+    transition:var(--transition);
+
+}
+
+.drop-zone:hover{
+
+    background:rgba(34,197,94,.08);
+
+}
+
+.drop-zone p{
+
+    font-size:18px;
+
+    margin-bottom:15px;
+
+}
+
+.drop-zone span{
+
+    display:block;
+
+    margin:15px 0;
+
+    color:var(--text-light);
+
+}
+
+.drop-zone input{
+
+    color:white;
+
+}
+
+/*==================================================
+                PREVIEW
+==================================================*/
+
+.receipt-preview{
+
+    height:320px;
+
+    border:2px dashed rgba(255,255,255,.15);
+
+    border-radius:16px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:var(--text-light);
+
+}
+/*==================================================
+                OCR RESULT
+==================================================*/
+
+.ocr-result{
+
+    padding:30px;
+
+    margin-bottom:35px;
+
+    overflow-x:auto;
+
+}
+
+.ocr-result h2{
+
+    margin-bottom:20px;
+
+    color:var(--white);
+
+}
+
+.ocr-result table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.ocr-result td{
+
+    padding:18px;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.ocr-result td:first-child{
+
+    width:220px;
+
+    font-weight:600;
+
+    color:var(--primary-light);
+
+}
+
+/*==================================================
+                FORM ELEMENTS
+==================================================*/
+
+.ocr-result input,
+.ocr-result select{
+
+    width:100%;
+
+    padding:12px 15px;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,.08);
+
+    color:var(--white);
+
+    border:1px solid rgba(255,255,255,.12);
+
+    transition:var(--transition);
+
+}
+
+.ocr-result input:focus,
+.ocr-result select:focus{
+
+    border-color:var(--primary);
+
+    box-shadow:0 0 12px rgba(34,197,94,.25);
+
+}
+
+.ocr-result select option{
+
+    background:#0b1f15;
+
+    color:white;
+
+}
+
+
+/*==================================================
+                CONFIDENCE CARD
+==================================================*/
+
+.confidence-card{
+
+    padding:30px;
+
+    margin-bottom:35px;
+
+}
+
+.confidence-card h2{
+
+    margin-bottom:20px;
+
+}
+
+.confidence-bar{
+
+    width:100%;
+
+    height:18px;
+
+    background:rgba(255,255,255,.08);
+
+    border-radius:50px;
+
+    overflow:hidden;
+
+    margin-bottom:15px;
+
+}
+
+.confidence-fill{
+
+    width:96%;
+
+    height:100%;
+
+    border-radius:50px;
+
+    background:
+    linear-gradient(
+        to right,
+        var(--primary-light),
+        var(--primary)
+    );
+
+}
+
+.confidence-card span{
+
+    color:var(--primary-light);
+
+    font-weight:600;
+
+}
+
+
+/*==================================================
+                ACTION BUTTONS
+==================================================*/
+
+.action-buttons{
+
+    display:flex;
+
+    gap:20px;
+
+    justify-content:flex-end;
+
+}
+
+.save-btn,
+.clear-btn{
+
+    border:none;
+
+    cursor:pointer;
+
+    padding:14px 30px;
+
+    border-radius:14px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    transition:var(--transition);
+
+}
+
+.save-btn{
+
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary-dark)
+    );
+
+}
+
+.save-btn:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 15px 30px rgba(34,197,94,.35);
+
+}
+
+.clear-btn{
+
+    background:#dc2626;
+
+    color:white;
+
+}
+
+.clear-btn:hover{
+
+    background:#b91c1c;
+
+    transform:translateY(-4px);
+
+}
+
+
+/*==================================================
+                PREMIUM SCROLLBAR
+==================================================*/
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+    height:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#07150d;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:var(--primary);
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:var(--primary-light);
+
+}
+
+
+/*==================================================
+                SELECTION
+==================================================*/
+
+::selection{
+
+    background:var(--primary);
+
+    color:var(--white);
+
+}
+
+
+/*==================================================
+                ANIMATION
+==================================================*/
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(25px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+.upload-card,
+.preview-card,
+.ocr-result,
+.confidence-card{
+
+    animation:fadeUp .7s ease;
+
+}
+
+
+/*==================================================
+                RESPONSIVE
+==================================================*/
+
+@media(max-width:900px){
+
+    .upload-section{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:650px){
+
+    .page-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:20px;
+
+    }
+
+    .action-buttons{
+
+        flex-direction:column;
+
+    }
+
+    .save-btn,
+    .clear-btn{
+
+        width:100%;
+
+    }
+
+    .ocr-result table{
+
+        min-width:650px;
+
+    }
+
+}
