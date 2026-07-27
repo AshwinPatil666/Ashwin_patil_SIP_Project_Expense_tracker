@@ -6,6 +6,7 @@
     <title>SpendWise Dashboard</title>
 
     <link rel="stylesheet" href="dashboard.css">
+    <script src="dasdhboard.js" defer></script>
 </head>
 <body>
 
@@ -28,13 +29,17 @@
         </ul>
     </aside>
 
+
+
                                 
     <main class="main-content">
 
     
         <header class="navbar">
             <div class="search">
-                <input type="text" placeholder="Search...">
+                <input type="text" id ="search" placeholder="Search...">
+
+    <div id="search-results" class="search-results"></div>
             </div>
             <div class="user">
                 <i class="fa-solid fa-bell"></i>
