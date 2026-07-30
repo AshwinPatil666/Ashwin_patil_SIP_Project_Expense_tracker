@@ -849,3 +849,67 @@ margin-top:10px;
 }
 
 .save-btn:hover { background: #14532d; }
+/* ==========================================
+   CHARTS SECTION STYLING (Clean & Modern)
+   ========================================== */
+.charts {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.chart-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+    width: 100%;
+    max-width: 550px; /* Graph height/width limits so it stays neat */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chart-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.chart-header h3 {
+    font-size: 1.1rem;
+    color: #1e293b;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-header h3 i {
+    color: #3b82f6;
+}
+
+.chart-subtitle {
+    font-size: 0.85rem;
+    color: #64748b;
+    background: #f8fafc;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.chart-body {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    height: 320px; /* Fixed height stops chart stretching */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

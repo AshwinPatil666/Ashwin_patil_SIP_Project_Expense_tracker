@@ -2,24 +2,25 @@
 // 1. GLOBAL VARIABLES & INITIALIZATION
 // ==========================================
 let transactions = [];
+let myExpenseChart = null; // To avoid chart overlapping issues
 
 document.addEventListener("DOMContentLoaded", () => {
     // A. User Authentication check
     const userId = localStorage.getItem("currentUserId");
     if (!userId) {
-        alert("Pehle login karein!");
+        alert("Please login first!");
         window.location.href = "login.html";
         return;
     }
 
-    // B. Navbar ya profile par email dikhana (agar element ho)
+    // B. Display user email on navbar or profile if element exists
     const savedEmail = localStorage.getItem("userEmail");
     const emailSpan = document.getElementById("user-display-email");
     if (savedEmail && emailSpan) {
         emailSpan.innerText = `👤 ${savedEmail}`;
     }
 
-    // C. MongoDB se data load karna
+    // C. Fetch data from MongoDB
     loadDashboardData();
 });
 
@@ -73,7 +74,7 @@ if (search && results) {
 }
 
 // ==========================================
-// 3. MONGODB SE DATA LANA (DASHBOARD)
+// 3. FETCH DATA FROM MONGODB (DASHBOARD)
 // ==========================================
 async function loadDashboardData() {
     const userId = localStorage.getItem("currentUserId");
@@ -86,9 +87,10 @@ async function loadDashboardData() {
         if (response.ok && Array.isArray(data)) {
             transactions = data; 
             updateDashboard(); 
+            renderExpenseChart(transactions); // Render interactive chart with live data
         }
     } catch (error) {
-        console.error("Dashboard data load nahi ho paya:", error);
+        console.error("Failed to load dashboard data:", error);
     }
 }
 
@@ -102,11 +104,11 @@ function updateDashboard() {
         totalExpense += Number(item.amount) || 0;
     });
 
-    // Budget page wali universal key yahan bhi use ki hai
+    // Universal key used in budget page as well
     const totalBudget = Number(localStorage.getItem("spendwise_monthly_budget")) || 50000;
     let currentBalance = totalBudget - totalExpense; 
 
-    // HTML me values update karna
+    // Update values in HTML cards
     const cardValues = document.querySelectorAll('.card h2');
     
     if(cardValues.length >= 3) {
@@ -117,7 +119,81 @@ function updateDashboard() {
 }
 
 // ==========================================
-// 5. ADD TRANSACTION MODAL (POPUP) LOGIC
+// 5. RENDER EXPENSE CHART (Chart.js Integration)
+// ==========================================
+// ==========================================
+// 5. RENDER EXPENSE CHART (Clean Chart.js Integration)
+// ==========================================
+function renderExpenseChart(expenses) {
+    const ctx = document.getElementById('expenseChart');
+    if (!ctx) return;
+
+    // Calculate category-wise totals
+    const categoryTotals = { Food: 0, Transport: 0, Shopping: 0, Entertainment: 0, Bills: 0 };
+
+    expenses.forEach(item => {
+        const amt = Number(item.amount) || 0;
+        if (item.category && categoryTotals[item.category] !== undefined) {
+            categoryTotals[item.category] += amt;
+        }
+    });
+
+    const categories = Object.keys(categoryTotals);
+    const amounts = Object.values(categoryTotals);
+
+    // Destroy previous chart instance if it exists to prevent overlapping bugs
+    if (myExpenseChart) {
+        myExpenseChart.destroy();
+    }
+
+    // Create new Doughnut Chart
+    myExpenseChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: categories,
+            datasets: [{
+                label: 'Expenses (₹)',
+                data: amounts,
+                backgroundColor: [
+                    '#3b82f6', // Blue (Food)
+                    '#10b981', // Green (Transport)
+                    '#f59e0b', // Yellow (Shopping)
+                    '#ef4444', // Red (Entertainment)
+                    '#8b5cf6'  // Purple (Bills)
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff',
+                hoverOffset: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, // Prevents stretching outside container
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        usePointStyle: true,
+                        font: {
+                            size: 12,
+                            family: "'Poppins', sans-serif"
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#1e293b',
+                    padding: 12,
+                    cornerRadius: 8
+                }
+            },
+            cutout: '68%' // Makes the doughnut ring sleek
+        }
+    });
+}
+
+// ==========================================
+// 6. ADD TRANSACTION MODAL (POPUP) LOGIC
 // ==========================================
 const modal = document.getElementById("expense-modal");
 const addBtn = document.getElementById("add-expense-btn");
@@ -136,7 +212,7 @@ if(closeBtn && modal) {
     });
 }
 
-// Naya form submit karke MongoDB me save karna
+// Submit new form and save to MongoDB
 if(form) {
     form.addEventListener("submit", async (event) => {
         event.preventDefault(); 
@@ -165,10 +241,11 @@ if(form) {
             if (response.ok) {
                 transactions.unshift(newExpense);
                 updateDashboard();
+                renderExpenseChart(transactions); // Update chart live on new expense addition
                 modal.style.display = "none";
                 form.reset();
             } else {
-                alert("Transaction save nahi ho paya!");
+                alert("Failed to save transaction!");
             }
         } catch (error) {
             console.error("Error saving transaction:", error);

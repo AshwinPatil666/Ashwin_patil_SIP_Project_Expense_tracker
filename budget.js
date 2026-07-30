@@ -10,20 +10,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // Dropdown change hone par category box dikhana ya chupana
 function toggleBudgetFields() {
-    const typeSelect = document.getElementById("budget-type-select").value;
+    const typeSelect = document.getElementById("budget-type-select")?.value;
     const categoryBox = document.getElementById("category-box");
     
-    if (typeSelect === "category") {
-        categoryBox.style.display = "block";
-    } else {
-        categoryBox.style.display = "none";
+    if (categoryBox) {
+        if (typeSelect === "category") {
+            categoryBox.style.display = "block";
+        } else {
+            categoryBox.style.display = "none";
+        }
     }
 }
 
 // Main function jo saari values aur table calculate karega
 async function loadBudgetPageData(userId) {
     try {
-        // Universal key use ki hai taaki baki pages ke sath match kare
         const totalBudget = Number(localStorage.getItem("spendwise_monthly_budget")) || 50000;
 
         const response = await fetch(`http://localhost:5000/api/expenses/${userId}`);
@@ -49,24 +50,34 @@ async function loadBudgetPageData(userId) {
         if (percentageUsed > 100) percentageUsed = 100;
 
         // UI update (Monthly Cards)
-        document.getElementById("ui-total-budget").innerText = `₹${totalBudget.toLocaleString()}`;
-        document.getElementById("ui-total-spent").innerText = `₹${totalSpent.toLocaleString()}`;
+        const totalBudgetEl = document.getElementById("ui-total-budget");
+        const totalSpentEl = document.getElementById("ui-total-spent");
         const remainingEl = document.getElementById("ui-remaining");
-        remainingEl.innerText = `₹${remaining.toLocaleString()}`;
-        remainingEl.style.color = remaining < 0 ? "#ef4444" : "inherit";
+        const percentTextEl = document.getElementById("ui-percent-text");
+        const progressFillEl = document.getElementById("ui-progress-fill");
 
-        document.getElementById("ui-percent-text").innerText = `${percentageUsed}%`;
-        document.getElementById("ui-progress-fill").style.width = `${percentageUsed}%`;
+        if (totalBudgetEl) totalBudgetEl.innerText = `₹${totalBudget.toLocaleString()}`;
+        if (totalSpentEl) totalSpentEl.innerText = `₹${totalSpent.toLocaleString()}`;
+        if (remainingEl) {
+            remainingEl.innerText = `₹${remaining.toLocaleString()}`;
+            remainingEl.style.color = remaining < 0 ? "#ef4444" : "inherit";
+        }
+
+        if (percentTextEl) percentTextEl.innerText = `${percentageUsed}%`;
+        if (progressFillEl) progressFillEl.style.width = `${percentageUsed}%`;
 
         // Category Table ko dynamically update karna
         updateCategoryTable(categorySpent);
+
+        // 🔥 AI Budget Tips ko call karna
+        loadAIBudgetTips(totalBudget, totalSpent, categorySpent);
 
     } catch (error) {
         console.error("Error loading budget data:", error);
     }
 }
 
-// Category Table ka data render karne ka function
+// Category Table ko render karne ka function (Direct Inputs)
 function updateCategoryTable(categorySpent) {
     const savedCatBudgets = JSON.parse(localStorage.getItem("spendwise_category_budgets")) || {
         Food: 10000,
@@ -76,10 +87,10 @@ function updateCategoryTable(categorySpent) {
         Bills: 7000
     };
 
-    const tbody = document.getElementById("category-table-body");
+    const tbody = document.getElementById("category-table-body") || document.querySelector("table tbody");
     if (!tbody) return;
 
-    tbody.innerHTML = ""; 
+    tbody.innerHTML = ""; // Purani rows saaf karna
 
     for (let cat in savedCatBudgets) {
         const catBudget = savedCatBudgets[cat];
@@ -100,7 +111,7 @@ function updateCategoryTable(categorySpent) {
             <tr>
                 <td><strong>${cat}</strong></td>
                 <td>
-                    <input type="number" class="cat-budget-input" data-category="${cat}" value="${catBudget}" style="width: 100px; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="number" class="cat-budget-input" data-category="${cat}" value="${catBudget}" style="width: 110px; padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
                 </td>
                 <td>₹${catSpent.toLocaleString()}</td>
                 <td>₹${catRemaining.toLocaleString()}</td>
@@ -111,10 +122,10 @@ function updateCategoryTable(categorySpent) {
     }
 }
 
-// Saare budgets ko ek sath save karne ka function
+// Ek hi click me saare category budgets save karne ka function
 function saveAllCategoryBudgets() {
     const inputs = document.querySelectorAll(".cat-budget-input");
-    let savedCatBudgets = {};
+    let savedCatBudgets = JSON.parse(localStorage.getItem("spendwise_category_budgets")) || {};
 
     inputs.forEach(input => {
         const cat = input.getAttribute("data-category");
@@ -123,48 +134,105 @@ function saveAllCategoryBudgets() {
     });
 
     localStorage.setItem("spendwise_category_budgets", JSON.stringify(savedCatBudgets));
-    alert("Saare category budgets ek sath successfully update ho gaye!");
+    alert("Saare category budgets successfully update ho gaye!");
     
     const userId = localStorage.getItem("currentUserId");
     loadBudgetPageData(userId);
 }
-// Modal open/close controls
-document.querySelector(".set-budget-btn").addEventListener("click", () => {
-    document.getElementById("budget-modal").style.display = "flex";
-    document.getElementById("budget-type-select").value = "monthly";
-    document.getElementById("category-box").style.display = "none";
-    document.getElementById("modal-budget-input").value = localStorage.getItem("spendwise_monthly_budget") || 50000;
-});
 
-function closeBudgetModal() {
-    document.getElementById("budget-modal").style.display = "none";
+// Google Gemini API se Smart Budget Tips lane ka function
+// ==========================================
+// AI BUDGET TIPS FUNCTION (OpenRouter API - Fixed Model)
+// ==========================================
+// ==========================================
+// SMART LOCAL AI BUDGET TIPS (100% Working, No API Errors)
+// ==========================================
+// ==========================================
+// AI BUDGET TIPS FUNCTION (OpenRouter - Nemotron Model)
+// ==========================================
+// ==========================================
+// AI BUDGET TIPS FUNCTION (OpenRouter - Nemotron Model - English)
+// ==========================================
+async function loadAIBudgetTips(totalBudget, totalSpent, categorySpent) {
+  // Enter your OpenRouter API key here
+    const url = "https://openrouter.ai/api/v1/chat/completions";
+
+    const prompt = `The user's monthly budget is ₹${totalBudget} and they have spent a total of ₹${totalSpent}. The category-wise breakdown is: ${JSON.stringify(categorySpent)}. Based on this data, provide 3 short and effective budget-saving tips in English using bullet points (-).`;
+
+    const tipsList = document.getElementById("ai-budget-tips-list");
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`,
+                "HTTP-Referer": "http://localhost:3000",
+                "X-Title": "SpendWise AI"
+            },
+            body: JSON.stringify({
+                model: "nvidia/nemotron-3-ultra-550b-a55b:free",
+                messages: [
+                    { role: "user", content: prompt }
+                ]
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.choices && data.choices[0].message) {
+            const aiText = data.choices[0].message.content;
+            
+            if (tipsList) {
+                const tipsArray = aiText.split('\n').filter(tip => tip.trim() !== '');
+                tipsList.innerHTML = "";
+                tipsArray.forEach(tip => {
+                    const li = document.createElement("li");
+                    li.innerHTML = tip.replace(/[-*#]/g, '').trim();
+                    tipsList.appendChild(li);
+                });
+            }
+        } else {
+            console.error("API Error Data:", data);
+            throw new Error("Invalid OpenRouter response format");
+        }
+
+    } catch (error) {
+        console.error("Failed to load AI tips:", error);
+        if (tipsList) {
+            tipsList.innerHTML = "<li>Failed to load tips. Please check your OpenRouter API Key.</li>";
+        }
+    }
+}
+// Modal open/close controls (Overall Monthly Budget ke liye)
+const setBudgetBtn = document.querySelector(".set-budget-btn");
+if (setBudgetBtn) {
+    setBudgetBtn.addEventListener("click", () => {
+        const modal = document.getElementById("budget-modal");
+        if (modal) {
+            modal.style.display = "flex";
+            const input = document.getElementById("modal-budget-input");
+            if (input) input.value = localStorage.getItem("spendwise_monthly_budget") || 50000;
+        }
+    });
 }
 
-// Save Budget logic (Monthly ya Category ke hisab se)
+function closeBudgetModal() {
+    const modal = document.getElementById("budget-modal");
+    if (modal) modal.style.display = "none";
+}
+
+// Monthly Budget save karne ka logic (Modal se)
 function saveModalBudget() {
-    const type = document.getElementById("budget-type-select").value;
-    const amount = Number(document.getElementById("modal-budget-input").value);
+    const amount = Number(document.getElementById("modal-budget-input")?.value);
 
     if (!amount || amount <= 0) {
         alert("Kripya ek valid amount dalein!");
         return;
     }
 
-    if (type === "monthly") {
-        // Universal key me save karna taaki sabhi jagah match ho
-        localStorage.setItem("spendwise_monthly_budget", amount);
-        alert("Monthly Budget successfully update ho gaya!");
-    } else {
-        // Category budget save karna
-        const category = document.getElementById("budget-category-select").value;
-        let savedCatBudgets = JSON.parse(localStorage.getItem("spendwise_category_budgets")) || {
-            Food: 10000, Transport: 6000, Shopping: 8000, Entertainment: 5000, Bills: 7000
-        };
-        
-        savedCatBudgets[category] = amount;
-        localStorage.setItem("spendwise_category_budgets", JSON.stringify(savedCatBudgets));
-        alert(`${category} ka Budget successfully update ho gaya!`);
-    }
+    localStorage.setItem("spendwise_monthly_budget", amount);
+    alert("Monthly Budget successfully update ho gaya!");
 
     closeBudgetModal();
     const userId = localStorage.getItem("currentUserId");

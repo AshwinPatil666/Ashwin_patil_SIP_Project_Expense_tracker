@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendWise Dashboard</title>
 
-    <!-- FontAwesome Link (Icons ke liye) -->
+    <!-- FontAwesome Link -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Chart.js Link (Graphs banane ke liye) -->
+    <!-- Chart.js Link -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Aapki CSS aur JS -->
+    <!-- CSS and JS Links -->
     <link rel="stylesheet" href="dashboard.css">
     <script src="dashboard.js" defer></script>
 </head>
@@ -37,28 +36,21 @@
         </ul>
     </aside>
 
-
-
-                                
+    <!-- ================= Main Content ================= -->
     <main class="main-content">
-
     
         <header class="navbar">
             <div class="search">
-                <input type="text" id ="search" placeholder="Search...">
-
-    <div id="search-results" class="search-results"></div>
-    <button id="add-expense-btn" class="add-btn">+ Add Transaction</button>
+                <input type="text" id="search" placeholder="Search...">
+                <div id="search-results" class="search-results"></div>
+                <button id="add-expense-btn" class="add-btn">+ Add Transaction</button>
             </div>
             <div class="user">
                 <i class="fa-solid fa-bell"></i>
                 <img src="" alt="User">
             </div>
         </header>
-
-    
         
-    
         <section class="cards">
             <div class="card">
                 <i class="fa-solid fa-money-bill-wave"></i>
@@ -82,20 +74,20 @@
             </div>
         </section>
 
-           <section class="charts">
-            <div class="chart-box">
-                <h3>Expense Trend</h3>
-                <canvas id="expenseChart"></canvas>
-            </div>
-            <div class="chart-box">
-                <h3>Expense Categories</h3>
-                <canvas id="categoryChart"></canvas>
+        <!-- Charts Section (Fixed Duplicate ID Issue) -->
+      <!-- ================= Charts Section ================= -->
+        <section class="charts">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fa-solid fa-chart-pie"></i> Category Breakdown</h3>
+                    <span class="chart-subtitle">Monthly Expenses</span>
+                </div>
+                <div class="chart-body">
+                    <canvas id="expenseChart"></canvas>
+                </div>
             </div>
         </section>
-
-    
         <section class="bottom">
-    
             <div class="transactions">
                 <h3>Recent Transactions</h3>
                 <table>
@@ -121,7 +113,6 @@
                     </tr>
                 </table>
             </div>
-
     
             <div class="ai-insights">
                 <h3>🤖 AI Insights</h3>
@@ -133,7 +124,6 @@
                 </ul>
             </div>
         </section>
-
     
         <section class="ocr">
             <h3>OCR Receipt Scanner</h3>
@@ -144,29 +134,30 @@
     </main>
 
 </div>
-<!-- 👉 YAHAN ADD KAREIN: Modal (Popup) -->
-    <div id="expense-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>Add New Entry</h2>
-            
-            <form id="expense-form">
-                <label>Type</label>
-                <select id="trans-type">
-                    <option value="expense">Expense (Kharcha)</option>
-                    <option value="income">Income (Aamdani)</option>
-                </select>
 
-                <label>Amount (₹)</label>
-                <input type="number" id="trans-amount" placeholder="e.g. 500" required>
+<!-- Modal (Popup) -->
+<div id="expense-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Add New Entry</h2>
+        
+        <form id="expense-form">
+            <label>Type</label>
+            <select id="trans-type">
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+            </select>
 
-                <label>Category</label>
-                <input type="text" id="trans-category" placeholder="e.g. Food, Salary" required>
+            <label>Amount (₹)</label>
+            <input type="number" id="trans-amount" placeholder="e.g. 500" required>
 
-                <button type="submit" class="save-btn">Save</button>
-            </form>
-        </div>
+            <label>Category</label>
+            <input type="text" id="trans-category" placeholder="e.g. Food, Salary" required>
+
+            <button type="submit" class="save-btn">Save</button>
+        </form>
     </div>
+</div>
 
 </body>
 </html>
