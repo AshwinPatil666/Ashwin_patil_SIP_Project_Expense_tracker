@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendWise | Budget</title>
     <link rel="stylesheet" href="budget.css">
+    <script src="budget.js"defer></script>
 </head>
 <body>
 
@@ -35,47 +36,34 @@
     <!-- =========================
             Budget Summary
     ========================== -->
+<!-- =========================
+            Budget Summary
+    ========================== -->
 
     <section class="budget-summary">
 
         <div class="budget-card">
-
             <h3>Total Budget</h3>
-
-            <h2>₹50,000</h2>
-
+            <h2 id="ui-total-budget">₹50,000</h2>
             <span>Current Month</span>
-
         </div>
 
         <div class="budget-card">
-
             <h3>Total Spent</h3>
-
-            <h2>₹31,250</h2>
-
+            <h2 id="ui-total-spent">₹31,250</h2>
             <span>62% Used</span>
-
         </div>
 
         <div class="budget-card">
-
             <h3>Remaining</h3>
-
-            <h2>₹18,750</h2>
-
+            <h2 id="ui-remaining">₹18,750</h2>
             <span>38% Left</span>
-
         </div>
 
         <div class="budget-card">
-
             <h3>Daily Limit</h3>
-
             <h2>₹625</h2>
-
             <span>Suggested</span>
-
         </div>
 
     </section>
@@ -87,112 +75,46 @@
     <section class="budget-progress">
 
         <div class="progress-header">
-
             <h2>Monthly Progress</h2>
-
-            <span>62%</span>
-
+            <span id="ui-percent-text">62%</span>
         </div>
 
         <div class="progress-bar">
-
-            <div class="progress-fill"></div>
-
+            <div class="progress-fill" id="ui-progress-fill"></div>
         </div>
 
     </section>
 
     <!-- =========================
+            Budget Progress
+    ========================== -->
+
+
+    <!-- =========================
             Category Budgets
     ========================== -->
 
-    <section class="category-budget">
+   <section class="category-budget">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2>Category Budgets</h2>
+        <button onclick="saveAllCategoryBudgets()" style="padding: 8px 15px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Save All Budgets</button>
+    </div>
 
-        <h2>Category Budget</h2>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Category</th>
-
-                    <th>Budget</th>
-
-                    <th>Spent</th>
-
-                    <th>Remaining</th>
-
-                    <th>Status</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <tr>
-
-                    <td>Food</td>
-
-                    <td>₹10,000</td>
-
-                    <td>₹6,500</td>
-
-                    <td>₹3,500</td>
-
-                    <td>Healthy</td>
-
-                </tr>
-
-                <tr>
-
-                    <td>Transport</td>
-
-                    <td>₹6,000</td>
-
-                    <td>₹5,200</td>
-
-                    <td>₹800</td>
-
-                    <td>Warning</td>
-
-                </tr>
-
-                <tr>
-
-                    <td>Shopping</td>
-
-                    <td>₹8,000</td>
-
-                    <td>₹3,400</td>
-
-                    <td>₹4,600</td>
-
-                    <td>Healthy</td>
-
-                </tr>
-
-                <tr>
-
-                    <td>Entertainment</td>
-
-                    <td>₹5,000</td>
-
-                    <td>₹5,700</td>
-
-                    <td>-₹700</td>
-
-                    <td>Exceeded</td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </section>
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Budget (Editable)</th>
+                <th>Spent</th>
+                <th>Remaining</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="category-table-body">
+            <!-- JavaScript se rows yahan aayengi -->
+        </tbody>
+    </table>
+</section>
 
     <!-- =========================
             Bottom Section
@@ -239,6 +161,44 @@
     </section>
 
 </main>
+<!-- =========================
+     Custom Budget Modal Popup
+========================== -->
+<!-- =========================
+     Updated Custom Budget Modal Popup
+========================== -->
+<div id="budget-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+    <div style="background: white; padding: 25px; border-radius: 12px; width: 350px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <h3 style="margin-bottom: 15px; text-align: center;">Set Budget</h3>
+        
+        <!-- Option Type Selection -->
+        <label style="font-size: 13px; font-weight: 600; color: #444;">Budget Kiska Set Karna Hai?</label>
+        <select id="budget-type-select" onchange="toggleBudgetFields()" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; margin-top: 5px;">
+            <option value="monthly">Overall Monthly Budget</option>
+            <option value="category">Category-wise Budget</option>
+        </select>
 
+        <!-- Agar Category select ho toh dropdown dikhega -->
+        <div id="category-box" style="display: none; margin-bottom: 15px;">
+            <label style="font-size: 13px; font-weight: 600; color: #444;">Category Chunein:</label>
+            <select id="budget-category-select" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; margin-top: 5px;">
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Bills">Bills & Utilities</option>
+            </select>
+        </div>
+
+        <!-- Amount Input -->
+        <label style="font-size: 13px; font-weight: 600; color: #444;">Amount (₹):</label>
+        <input type="number" id="modal-budget-input" placeholder="e.g. 5000" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 20px; margin-top: 5px; box-sizing: border-box; font-size: 16px;">
+        
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="closeBudgetModal()" style="padding: 8px 15px; background: #e5e7eb; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Cancel</button>
+            <button onclick="saveModalBudget()" style="padding: 8px 15px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Save Budget</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
