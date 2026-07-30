@@ -155,6 +155,15 @@ function saveAllCategoryBudgets() {
 // ==========================================
 async function loadAIBudgetTips(totalBudget, totalSpent, categorySpent) {
   // Enter your OpenRouter API key here
+    const apiKey = localStorage.getItem("openrouter_api_key"); 
+    
+    if (!apiKey) {
+        const tipsList = document.getElementById("ai-budget-tips-list");
+        if (tipsList) {
+            tipsList.innerHTML = "<li>Please set your OpenRouter API key in browser console first.</li>";
+        }
+        return;
+    }
     const url = "https://openrouter.ai/api/v1/chat/completions";
 
     const prompt = `The user's monthly budget is ₹${totalBudget} and they have spent a total of ₹${totalSpent}. The category-wise breakdown is: ${JSON.stringify(categorySpent)}. Based on this data, provide 3 short and effective budget-saving tips in English using bullet points (-).`;
@@ -171,7 +180,7 @@ async function loadAIBudgetTips(totalBudget, totalSpent, categorySpent) {
                 "X-Title": "SpendWise AI"
             },
             body: JSON.stringify({
-                model: "nvidia/nemotron-3-ultra-550b-a55b:free",
+      model: "openrouter/free",
                 messages: [
                     { role: "user", content: prompt }
                 ]
@@ -180,7 +189,10 @@ async function loadAIBudgetTips(totalBudget, totalSpent, categorySpent) {
 
         const data = await response.json();
         
-        if (data.choices && data.choices[0].message) {
+        // Debugging ke liye console me response print karna
+        console.log("OpenRouter Response:", data);
+
+        if (data.choices && data.choices[0] && data.choices[0].message) {
             const aiText = data.choices[0].message.content;
             
             if (tipsList) {
@@ -193,14 +205,15 @@ async function loadAIBudgetTips(totalBudget, totalSpent, categorySpent) {
                 });
             }
         } else {
-            console.error("API Error Data:", data);
-            throw new Error("Invalid OpenRouter response format");
+            // Yeh batayega ki error exactly kya hai
+            console.error("Detailed API Error Data:", data);
+            throw new Error(data.error?.message || "Invalid OpenRouter response format");
         }
 
     } catch (error) {
         console.error("Failed to load AI tips:", error);
         if (tipsList) {
-            tipsList.innerHTML = "<li>Failed to load tips. Please check your OpenRouter API Key.</li>";
+            tipsList.innerHTML = "<li>Failed to load tips.</li>";
         }
     }
 }

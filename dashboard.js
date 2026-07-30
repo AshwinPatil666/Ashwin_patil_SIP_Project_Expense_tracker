@@ -128,39 +128,38 @@ function renderExpenseChart(expenses) {
     const ctx = document.getElementById('expenseChart');
     if (!ctx) return;
 
-    // Calculate category-wise totals
-    const categoryTotals = { Food: 0, Transport: 0, Shopping: 0, Entertainment: 0, Bills: 0 };
+    // Dynamically generate category totals from actual data (No hardcoding bugs)
+    const categoryTotals = {};
 
     expenses.forEach(item => {
         const amt = Number(item.amount) || 0;
-        if (item.category && categoryTotals[item.category] !== undefined) {
-            categoryTotals[item.category] += amt;
-        }
+        const cat = item.category ? item.category.trim() : "General";
+        
+        categoryTotals[cat] = (categoryTotals[cat] || 0) + amt;
     });
 
     const categories = Object.keys(categoryTotals);
     const amounts = Object.values(categoryTotals);
 
-    // Destroy previous chart instance if it exists to prevent overlapping bugs
-    if (myExpenseChart) {
-        myExpenseChart.destroy();
+    // Destroy previous chart instance if it exists
+    if (window.myExpenseChart) {
+        window.myExpenseChart.destroy();
     }
 
-    // Create new Doughnut Chart
-    myExpenseChart = new Chart(ctx, {
+    // Modern color palette generator for dynamic categories
+    const colorPalette = [
+        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', 
+        '#ec4899', '#06b6d4', '#84cc16', '#14532d'
+    ];
+
+    window.myExpenseChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: categories,
             datasets: [{
                 label: 'Expenses (₹)',
                 data: amounts,
-                backgroundColor: [
-                    '#3b82f6', // Blue (Food)
-                    '#10b981', // Green (Transport)
-                    '#f59e0b', // Yellow (Shopping)
-                    '#ef4444', // Red (Entertainment)
-                    '#8b5cf6'  // Purple (Bills)
-                ],
+                backgroundColor: colorPalette.slice(0, categories.length),
                 borderWidth: 2,
                 borderColor: '#ffffff',
                 hoverOffset: 6
@@ -168,7 +167,7 @@ function renderExpenseChart(expenses) {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false, // Prevents stretching outside container
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'bottom',
@@ -187,7 +186,7 @@ function renderExpenseChart(expenses) {
                     cornerRadius: 8
                 }
             },
-            cutout: '68%' // Makes the doughnut ring sleek
+            cutout: '68%'
         }
     });
 }

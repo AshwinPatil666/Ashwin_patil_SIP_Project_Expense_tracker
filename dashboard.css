@@ -852,24 +852,33 @@ margin-top:10px;
 /* ==========================================
    CHARTS SECTION STYLING (Clean & Modern)
    ========================================== */
+/* ==========================================
+   CLEAN & MODERN CHARTS SECTION STYLING
+========================================== */
 .charts {
-    margin-top: 25px;
     display: flex;
     justify-content: center;
     width: 100%;
+    margin-bottom: 35px;
 }
 
 .chart-card {
     background: #ffffff;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.20);
     border: 1px solid #f1f5f9;
     width: 100%;
-    max-width: 550px; /* Graph height/width limits so it stays neat */
+    max-width: 600px; /* Perfect width so it doesn't stretch too wide */
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: 0.3s;
+}
+
+.chart-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
 }
 
 .chart-header {
@@ -877,39 +886,117 @@ margin-top:10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .chart-header h3 {
-    font-size: 1.1rem;
-    color: #1e293b;
+    font-size: 1.25rem;
+    color: #14532d;
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .chart-header h3 i {
-    color: #3b82f6;
+    color: #16a34a;
 }
 
 .chart-subtitle {
     font-size: 0.85rem;
     color: #64748b;
-    background: #f8fafc;
-    padding: 4px 10px;
+    background: #f0fdf4;
+    color: #15803d;
+    padding: 6px 12px;
     border-radius: 20px;
     font-weight: 500;
 }
-
 .chart-body {
     position: relative;
     width: 100%;
     max-width: 380px;
-    height: 320px; /* Fixed height stops chart stretching */
+    height: 320px !important; /* Yeh line zaroori hai! */
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* Responsive adjustment for mobiles */
+@media (max-width: 768px) {
+    .chart-body {
+        height: 260px !important;
+    }
+}
+/* ==========================================
+   FIXED BOTTOM SECTION (Transactions & AI Insights)
+========================================== */
+.bottom {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+    margin-bottom: 35px;
+    align-items: start; /* Yeh ensure karega ki dono boxes upar se barabar align rahein */
+}
+
+/* Transactions Card */
+.transactions {
+    background: white;
+    border-radius: 25px;
+    padding: 25px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.20);
+}
+
+.transactions h3 {
+    color: #14532d;
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+}
+
+/* AI Insights Side Card */
+.ai-insights {
+    background: white;
+    border-radius: 25px;
+    padding: 25px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.20);
+}
+
+.ai-insights h3 {
+    color: #14532d;
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ai-insights ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* List items ke beech me equal spacing */
+}
+
+.ai-insights li {
+    background: #f7fff8;
+    border-left: 5px solid #16a34a;
+    padding: 12px 15px;
+    border-radius: 10px;
+    color: #334155;
+    font-size: 0.92rem;
+    line-height: 1.4;
+    transition: 0.3s;
+}
+
+.ai-insights li:hover {
+    transform: translateX(5px);
+    background: #ebfff0;
+}
+
+/* Responsive adjustment for tablets/mobiles */
+@media(max-width: 1100px) {
+    .bottom {
+        grid-template-columns: 1fr;
+    }
 }
