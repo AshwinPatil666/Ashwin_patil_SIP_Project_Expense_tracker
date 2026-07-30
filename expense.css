@@ -610,3 +610,124 @@ min-width:800px;
 }
 
 }
+/* ==========================
+   Modal (Popup) Styling
+========================== */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
+    width: 400px;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #555;
+}
+
+.close-btn:hover { color: red; }
+
+.modal-content label {
+    display: block;
+    margin-top: 15px;
+    color: #14532d;
+    font-weight: 500;
+}
+
+.modal-content input, .modal-content select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+}
+
+.save-btn {
+    width: 100%;
+    background: #16a34a;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.save-btn:hover { background: #14532d; }
+
+
+/* ==========================
+   Bottom Section (Receipts & Chart)
+========================== */
+.expense-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-top: 35px;
+}
+
+.recent-receipts, .expense-report {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.receipt-grid {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.receipt-box {
+    width: 100px;
+    height: 100px;
+    background: #f4f4f4;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 12px;
+    color: #555;
+    text-align: center;
+}
+
+.receipt-box:hover {
+    background: #e0e0e0;
+    transform: translateY(-5px);
+}
+
+.add-new {
+    border: 2px dashed #16a34a;
+    background: transparent;
+    color: #16a34a;
+}
+.add-new:hover {
+    background: #f0fdf4;
+}

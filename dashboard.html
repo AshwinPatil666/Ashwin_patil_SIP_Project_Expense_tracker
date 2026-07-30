@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,8 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendWise Dashboard</title>
 
+    <!-- FontAwesome Link (Icons ke liye) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Chart.js Link (Graphs banane ke liye) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Aapki CSS aur JS -->
     <link rel="stylesheet" href="dashboard.css">
-    <script src="dasdhboard.js" defer></script>
+    <script src="dashboard.js" defer></script>
 </head>
 <body>
 
@@ -40,6 +48,7 @@
                 <input type="text" id ="search" placeholder="Search...">
 
     <div id="search-results" class="search-results"></div>
+    <button id="add-expense-btn" class="add-btn">+ Add Transaction</button>
             </div>
             <div class="user">
                 <i class="fa-solid fa-bell"></i>
@@ -135,7 +144,29 @@
     </main>
 
 </div>
+<!-- 👉 YAHAN ADD KAREIN: Modal (Popup) -->
+    <div id="expense-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Add New Entry</h2>
+            
+            <form id="expense-form">
+                <label>Type</label>
+                <select id="trans-type">
+                    <option value="expense">Expense (Kharcha)</option>
+                    <option value="income">Income (Aamdani)</option>
+                </select>
 
+                <label>Amount (₹)</label>
+                <input type="number" id="trans-amount" placeholder="e.g. 500" required>
+
+                <label>Category</label>
+                <input type="text" id="trans-category" placeholder="e.g. Food, Salary" required>
+
+                <button type="submit" class="save-btn">Save</button>
+            </form>
+        </div>
+    </div>
 
 </body>
 </html>

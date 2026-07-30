@@ -5,8 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="expense.css">
+    <script src="expenses.js"defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <div class="user-profile-box" style="display: flex; align-items: center; gap: 15px; justify-content: flex-end; padding: 15px;">
+    <!-- Yahan user ka email dikhega -->
+    <span id="user-display-email" style="font-weight: 600; color: #333;"></span>
+    
+    <!-- Logout Button -->
+    <button onclick="logoutUser()" style="background: #ef4444; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer;">
+        Logout
+    </button>
+</div>
     <main class="expenses-page">
 
     <section class="page-header">
@@ -39,97 +50,138 @@
 
     </section>
 
-    <section class="expense-filter">
-
-        <select>
-
-            <option>Category</option>
-
+ <section class="expense-filter">
+        <!-- Category Filter -->
+        <select id="filter-category">
+            <option value="All">All Categories</option>
+            <option value="Food">Food</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Utility">Utility</option>
+            <option value="Fuel">Fuel</option>
         </select>
 
-        <select>
-
-            <option>Payment</option>
-
+        <!-- Payment Filter -->
+        <select id="filter-payment">
+            <option value="All">All Payments</option>
+            <option value="UPI">UPI</option>
+            <option value="Card">Card</option>
+            <option value="Cash">Cash</option>
+            <option value="Bank">Bank</option>
         </select>
 
-        <input
-        type="date">
+        <!-- Date Filter -->
+        <input type="date" id="filter-date">
 
-        <input
-        type="search"
-        placeholder="Search Expense">
-
+        <!-- Search Filter -->
+        <input type="search" id="filter-search" placeholder="Search Expense">
     </section>
 
-    <section class="expense-table">
-
+  <section class="expense-table">
         <table>
-
             <thead>
-
                 <tr>
-
                     <th>Date</th>
-
                     <th>Title</th>
-
                     <th>Category</th>
-
                     <th>Payment</th>
-
                     <th>Amount</th>
-
                     <th>Status</th>
-
                     <th>Action</th>
-
                 </tr>
-
             </thead>
-
-            <tbody>
-
+            <!-- 👉 Yahan id lagayi hai taaki JS data daal sake -->
+            <tbody id="expense-table-body">
                 <tr>
-
                     <td>25 Jul</td>
-
                     <td>Pizza</td>
-
                     <td>Food</td>
-
                     <td>UPI</td>
-
-                    <td>₹450</td>
-
-                    <td>Paid</td>
-
-                    <td>Edit Delete</td>
-
+                    <td style="color: red; font-weight: bold;">-₹450</td>
+                    <td><span style="background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 10px;">Paid</span></td>
+                    <!-- 👉 Edit aur Delete ke buttons/icons -->
+                    <td>
+                        <button style="border:none; background:none; color:blue; cursor:pointer;">✏️ Edit</button> 
+                        <button style="border:none; background:none; color:red; cursor:pointer;">🗑️ Delete</button>
+                    </td>
                 </tr>
-
             </tbody>
-
         </table>
-
     </section>
 
-    <section class="expense-bottom">
-
-        <div class="recent-receipts">
-
+<section class="expense-bottom">
+        <!-- Receipt Section -->
+   <div class="recent-receipts">
             <h2>Recent Receipts</h2>
-
+            <div class="receipt-grid">
+                <div class="receipt-box">
+                    <span style="font-size: 24px;">📄</span>
+                    <p>Pizza_Bill.jpg</p>
+                </div>
+                <div class="receipt-box">
+                    <span style="font-size: 24px;">📄</span>
+                    <p>Shoes.pdf</p>
+                </div>
+                
+                <!-- 👉 UPDATE: Upload Wala Box -->
+                <div class="receipt-box add-new" onclick="document.getElementById('receipt-upload').click()">
+                    <span style="font-size: 24px;">+</span>
+                    <p>Upload</p>
+                </div>
+                
+                <!-- 👉 UPDATE: Hidden File Input (Ye screen par nahi dikhega) -->
+                <input type="file" id="receipt-upload" accept="image/*, .pdf" style="display: none;">
+                
+            </div>
         </div>
 
+        <!-- Chart Section -->
         <div class="expense-report">
-
-            <h2>Expense Summary</h2>
-
+            <h2>Category Summary</h2>
+            <div style="width: 100%; height: 200px; display: flex; justify-content: center;">
+                <canvas id="categoryPieChart"></canvas>
+            </div>
         </div>
-
     </section>
 
 </main>
+<!-- Add Expense Popup (Modal) -->
+    <div id="expense-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Add New Expense</h2>
+            
+            <form id="expense-form">
+                <label>Date</label>
+                <input type="date" id="exp-date" required>
+                <label>Time</label>
+                <input type="time" id="exp-time" required>
+
+                <label>Title</label>
+                <input type="text" id="exp-title" placeholder="e.g. Zomato, Shoes" required>
+
+                
+                <label>Category</label>
+                <select id="exp-category">
+                    <option value="Food">Food</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Utility">Utility</option>
+                    <option value="Fuel">Fuel</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <label>Payment Mode</label>
+                <select id="exp-payment">
+                    <option value="UPI">UPI</option>
+                    <option value="Card">Card</option>
+                    <option value="Cash">Cash</option>
+                </select>
+
+                <label>Amount (₹)</label>
+                <input type="number" id="exp-amount" placeholder="e.g. 500" required>
+
+                <button type="submit" class="save-btn">Save Expense</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
