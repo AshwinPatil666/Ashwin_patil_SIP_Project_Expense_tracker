@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpendWise | Settings</title>
+    
+    <!-- CSS Links -->
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="setting.css">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- JavaScript Files -->
+    <script src="setting.js" defer></script>
+    <script src="global-chat.js" defer></script>
+    <script src="sidebar.js" defer></script>
+</head>
+<body>
+
+<div class="dashboard">
+
+    <main class="settings-page" style="flex: 1; padding: 25px;">
+        
+        <!-- =========================
+             User Profile Header Bar
+        ========================= -->
+        <div class="user-profile-header" style="display: flex; justify-content: flex-end; align-items: center; gap: 15px; margin-bottom: 25px; background: white; padding: 12px 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <span id="user-display-email" style="font-weight: 600; color: #333; font-size: 0.95rem;"></span>
+            <button onclick="logoutUser()" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                Logout
+            </button>
+        </div>
+
+        <!-- =========================
+             Page Header
+        ========================= -->
+        <section class="page-header">
+            <div>
+                <h1>Account Settings</h1>
+                <p>Manage your account preferences and security settings.</p>
+            </div>
+        </section>
+
+        <!-- =========================
+             Settings Form Section
+        ========================= -->
+        <div class="settings-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 35px;">
+            
+            <!-- 1. Profile Information Card -->
+            <div class="settings-card" style="background: rgb(255, 248, 248); padding: 30px; border-radius: 20px; border: 1px solid rgb(18, 66, 30); box-shadow: 0 15px 35px rgba(0,0,0,.45);">
+                <h2 style="margin-bottom: 20px; color: #0d4f13; font-size: 22px;"><i class="fa-solid fa-user-gear" style="margin-right: 8px; color: #22c55e;"></i> Profile Details</h2>
+                
+                <form id="profile-form" onsubmit="event.preventDefault(); updateProfile();">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #0d4f13; font-size: 0.9rem;">Full Name</label>
+                        <input type="text" id="setting-name" placeholder="Enter your name" style="width: 100%; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 12px; background: #f8fafc; outline: none; font-size: 0.95rem;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #0d4f13; font-size: 0.9rem;">Email Address</label>
+                        <input type="email" id="setting-email" placeholder="Enter your email" disabled style="width: 100%; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 12px; background: #e2e8f0; color: #64748b; outline: none; font-size: 0.95rem; cursor: not-allowed;">
+                    </div>
+
+                    <button type="submit" style="padding: 12px 24px; background: linear-gradient(135deg, #22c55e, #15803d); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 10px 25px rgba(34,197,94,.35);">Save Changes</button>
+                </form>
+            </div>
+
+            <!-- 2. Security & Password Card -->
+            <div class="settings-card" style="background: rgb(255, 248, 248); padding: 30px; border-radius: 20px; border: 1px solid rgb(18, 66, 30); box-shadow: 0 15px 35px rgba(0,0,0,.45);">
+                <h2 style="margin-bottom: 20px; color: #0d4f13; font-size: 22px;"><i class="fa-solid fa-lock" style="margin-right: 8px; color: #22c55e;"></i> Security</h2>
+                
+                <form id="password-form" onsubmit="event.preventDefault(); updatePassword();">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #0d4f13; font-size: 0.9rem;">Current Password</label>
+                        <input type="password" id="current-password" placeholder="••••••••" required style="width: 100%; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 12px; background: #f8fafc; outline: none; font-size: 0.95rem;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #0d4f13; font-size: 0.9rem;">New Password</label>
+                        <input type="password" id="new-password" placeholder="••••••••" required style="width: 100%; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 12px; background: #f8fafc; outline: none; font-size: 0.95rem;">
+                    </div>
+
+                    <button type="submit" style="padding: 12px 24px; background: linear-gradient(135deg, #22c55e, #15803d); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 10px 25px rgba(34,197,94,.35);">Update Password</button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- =========================
+             Preferences & Currency Section
+        ========================= -->
+        <div class="settings-card" style="background: rgb(255, 248, 248); padding: 30px; border-radius: 20px; border: 1px solid rgb(18, 66, 30); box-shadow: 0 15px 35px rgba(0,0,0,.45);">
+            <h2 style="margin-bottom: 20px; color: #0d4f13; font-size: 22px;"><i class="fa-solid fa-sliders" style="margin-right: 8px; color: #22c55e;"></i> Preferences</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center;">
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #0d4f13; font-size: 0.9rem;">Default Currency</label>
+                    <select id="currency-select" style="width: 100%; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 12px; background: #f8fafc; color: #0d4f13; outline: none; font-size: 0.95rem;">
+                        <option value="INR">Indian Rupee (₹)</option>
+                        <option value="USD">US Dollar ($)</option>
+                        <option value="EUR">Euro (€)</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 12px; margin-top: 25px;">
+                    <input type="checkbox" id="email-notif" checked style="width: 20px; height: 20px; accent-color: #22c55e; cursor: pointer;">
+                    <label for="email-notif" style="font-weight: 600; color: #0d4f13; cursor: pointer; font-size: 0.95rem;">Receive Email Notifications & AI Alerts</label>
+                </div>
+            </div>
+
+            <div style="margin-top: 25px;">
+                <button onclick="savePreferences()" style="padding: 12px 28px; background: #16a34a; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;">Save Preferences</button>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

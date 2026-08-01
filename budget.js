@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const userId = localStorage.getItem("currentUserId");
     if (!userId) {
-        alert("Pehle login karein!");
+        alert("Please login first!");
         window.location.href = "login.html";
         return;
     }
@@ -140,18 +140,7 @@ function saveAllCategoryBudgets() {
     loadBudgetPageData(userId);
 }
 
-// Google Gemini API se Smart Budget Tips lane ka function
-// ==========================================
-// AI BUDGET TIPS FUNCTION (OpenRouter API - Fixed Model)
-// ==========================================
-// ==========================================
-// SMART LOCAL AI BUDGET TIPS (100% Working, No API Errors)
-// ==========================================
-// ==========================================
-// AI BUDGET TIPS FUNCTION (OpenRouter - Nemotron Model)
-// ==========================================
-// ==========================================
-// AI BUDGET TIPS FUNCTION (OpenRouter - Nemotron Model - English)
+
 // ==========================================
 async function loadAIBudgetTips(totalBudget, totalSpent, categorySpent) {
   // Enter your OpenRouter API key here

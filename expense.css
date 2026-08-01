@@ -14,11 +14,11 @@
 
     --bg-dark:#0f172a;
     --bg-green:#14532d;
-    --bg-dgreen:#15803d;
+   
     --white:#118249;
 
     --text:#0d4f13;
-    --text-light:#94a3b8;
+    --text-light:#000000;
 
     --card:rgb(255, 248, 248);
 
@@ -59,7 +59,7 @@ body{
     linear-gradient(
         135deg,
         var(--bg-dark),
-        #071a12,
+        #081b12,
         var(--bg-green)
     );
 
@@ -93,7 +93,7 @@ body{
 
     background:var(--card);
 
-    backdrop-filter:blur(16px);
+    backdrop-filter:blur(18px);
 
     border:1px solid var(--border);
 
@@ -283,9 +283,9 @@ body{
 
     font-size:34px;
 
-    color:white;
+    color:var(--text-light);
 
-    margin-bottom:8px;
+    margin-bottom:10px;
 
 }
 
@@ -731,3 +731,4 @@ min-width:800px;
 .add-new:hover {
     background: #f0fdf4;
 }
+

@@ -3,33 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>SpendWise | Expense</title>
     <link rel="stylesheet" href="expense.css">
     <script src="expenses.js"defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="global-chat.js" defer></script>
-</head>
+     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+     <script src="sidebar.js" defer></script>
+</head> 
 <body>
-    <div class="user-profile-box" style="display: flex; align-items: center; gap: 15px; justify-content: flex-end; padding: 15px;">
-    <!-- Yahan user ka email dikhega -->
-    <span id="user-display-email" style="font-weight: 600; color: #333;"></span>
+<div class="dashboard">  
     
-    <!-- Logout Button -->
-    <button onclick="logoutUser()" style="background: #ef4444; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer;">
-        Logout
-    </button>
-</div>
     <main class="expenses-page">
 
-    <section class="page-header">
+        <!-- Top Profile & Logout Header Bar -->
+        <div class="user-profile-header" style="display: flex; justify-content: flex-end; align-items: center; gap: 15px; margin-bottom: 25px; background: white; padding: 12px 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <span id="user-display-email" style="font-weight: 600; color: #333; font-size: 0.95rem;"></span>
+            <button onclick="logoutUser()" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                Logout
+            </button>
+        </div>
 
-        <h1>Expenses</h1>
+        <section class="page-header">
+            <h1>Expenses</h1>
+            <button class="add-expense-btn">
+                + Add Expense
+            </button>
+        </section>
 
-        <button class="add-expense-btn">
-            + Add Expense
-        </button>
-
-    </section>
+        <!-- Baaki saara code waisa hi rahega... -->
 
     <section class="expense-summary">
 
@@ -90,7 +94,7 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <!-- 👉 Yahan id lagayi hai taaki JS data daal sake -->
+           
             <tbody id="expense-table-body">
                 <tr>
                     <td>25 Jul</td>
@@ -99,7 +103,7 @@
                     <td>UPI</td>
                     <td style="color: red; font-weight: bold;">-₹450</td>
                     <td><span style="background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 10px;">Paid</span></td>
-                    <!-- 👉 Edit aur Delete ke buttons/icons -->
+                 
                     <td>
                         <button style="border:none; background:none; color:blue; cursor:pointer;">✏️ Edit</button> 
                         <button style="border:none; background:none; color:red; cursor:pointer;">🗑️ Delete</button>
@@ -110,7 +114,7 @@
     </section>
 
 <section class="expense-bottom">
-        <!-- Receipt Section -->
+       
    <div class="recent-receipts">
             <h2>Recent Receipts</h2>
             <div class="receipt-grid">
@@ -123,13 +127,13 @@
                     <p>Shoes.pdf</p>
                 </div>
                 
-                <!-- 👉 UPDATE: Upload Wala Box -->
+                <!--  UPDATE: Upload Wala Box -->
                 <div class="receipt-box add-new" onclick="document.getElementById('receipt-upload').click()">
                     <span style="font-size: 24px;">+</span>
                     <p>Upload</p>
                 </div>
                 
-                <!-- 👉 UPDATE: Hidden File Input (Ye screen par nahi dikhega) -->
+                <!--  UPDATE: Hidden File Input (Ye screen par nahi dikhega) -->
                 <input type="file" id="receipt-upload" accept="image/*, .pdf" style="display: none;">
                 
             </div>
@@ -184,5 +188,6 @@
             </form>
         </div>
     </div>
+  </div>   
 </body>
 </html>

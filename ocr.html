@@ -5,188 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendWise | OCR Scanner</title>
     <link rel="stylesheet" href="ocr.css">
+    <link rel="stylesheet" href="dashboard.css"> <!-- Sidebar aur layout consistency ke liye -->
+    
     <script src="global-chat.js" defer></script>
+    <script src="sidebar.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-<main class="ocr-page">
+<!-- Dashboard wrapper zaroori hai taaki sidebar left side me properly inject ho sake -->
+<div class="dashboard">
 
-    <!--============================
-            PAGE HEADER
-    =============================-->
+    <main class="ocr-page" style="flex: 1; padding: 25px;">
 
-    <section class="page-header">
-
-        <div>
-
-            <h1>Receipt OCR Scanner</h1>
-
-            <p>Upload or scan your receipt to extract expense details automatically.</p>
-
-        </div>
-
-        <button class="scan-btn">
-
-            📷 Scan Receipt
-
-        </button>
-
-    </section>
-
-    <!--============================
-            UPLOAD SECTION
-    =============================-->
-
-    <section class="upload-section">
-
-        <div class="upload-card">
-
-            <h2>Upload Receipt</h2>
-
-            <div class="drop-zone">
-
-                <p>📄 Drag & Drop Receipt</p>
-
-                <span>or</span>
-
-                <input type="file" accept="image/*,.pdf">
-
+        <!--============================
+                PAGE HEADER
+        =============================-->
+        <section class="page-header">
+            <div>
+                <h1>Receipt OCR Scanner</h1>
+                <p>Upload or scan your receipt to extract expense details automatically.</p>
             </div>
+            <button class="scan-btn">
+                📷 Scan Receipt
+            </button>
+        </section>
 
+        <!--============================
+                UPLOAD SECTION
+        =============================-->
+       <div class="upload-section">
+    
+    <!-- Upload / Camera Card -->
+    <div class="upload-card">
+        <h2>Upload or Scan Receipt</h2>
+        <div class="drop-zone">
+            <i class="fa-solid fa-camera" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
+            <p>Mobile se photo kheechein ya file chunein</p>
+            <span>OR Drag & Drop image here</span>
+            
+            <!-- capture="environment" attribute mobile user ke liye direct rear camera open kar dega -->
+            <input type="file" id="receipt-file-input" accept="image/*" capture="environment" onchange="previewReceipt(event)" style="margin-top: 15px;">
         </div>
+        <button class="scan-btn" onclick="processReceiptScan()" style="width: 100%; margin-top: 20px;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Scan & Extract Details
+        </button>
+    </div>
 
-        <div class="preview-card">
+    <!-- Preview Card -->
+    <div class="preview-card">
+        <h2>Receipt Preview</h2>
+        <div class="receipt-preview">
+            <span>No receipt selected</span>
+        </div>
+    </div>
 
-            <h2>Receipt Preview</h2>
+</div>
 
-            <div class="receipt-preview">
+        <!--============================
+                OCR RESULT
+        =============================-->
+ <!-- OCR Result Table Section -->
+<section class="ocr-result">
+    <h2>Scanned Receipt Details</h2>
+    <table>
+        <!-- Naya row Receipt Number ke liye -->
+        <tr>
+            <td>Receipt Number</td>
+            <td><input type="text" id="ocr-receipt-no" placeholder="Auto-detected bill no."></td>
+        </tr>
+        <tr>
+            <td>Merchant / Store</td>
+            <td><input type="text" id="ocr-merchant" placeholder="Store name"></td>
+        </tr>
+        <tr>
+            <td>Amount (₹)</td>
+            <td><input type="number" id="ocr-amount" placeholder="0.00"></td>
+        </tr>
+        <tr>
+            <td>Category</td>
+            <td>
+                <select id="ocr-category">
+                    <option value="Food">Food & Dining</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Bills">Bills & Utilities</option>
+                    <option value="General">General</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Date</td>
+            <td><input type="date" id="ocr-date"></td>
+        </tr>
+    </table>
+</section>
 
-                Image Preview
-
+        <!--============================
+                AI CONFIDENCE
+        =============================-->
+        <section class="confidence-card">
+            <h2>OCR Confidence</h2>
+            <div class="confidence-bar">
+                <div class="confidence-fill"></div>
             </div>
+            <span>96% Accurate</span>
+        </section>
 
-        </div>
+        <!--============================
+                ACTION BUTTONS
+        =============================-->
+        <section class="action-buttons">
+            <button class="save-btn">
+                Save Expense
+            </button>
+            <button class="clear-btn">
+                Clear
+            </button>
+        </section>
 
-    </section>
+    </main>
 
-    <!--============================
-            OCR RESULT
-    =============================-->
-
-    <section class="ocr-result">
-
-        <h2>Extracted Information</h2>
-
-        <table>
-
-            <tbody>
-
-                <tr>
-
-                    <td>Merchant</td>
-
-                    <td><input type="text" value="Domino's Pizza"></td>
-
-                </tr>
-
-                <tr>
-
-                    <td>Date</td>
-
-                    <td><input type="date"></td>
-
-                </tr>
-
-                <tr>
-
-                    <td>Category</td>
-
-                    <td>
-
-                        <select>
-
-                            <option>Food</option>
-                            <option>Shopping</option>
-                            <option>Travel</option>
-                            <option>Bills</option>
-
-                        </select>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <td>Payment</td>
-
-                    <td>
-
-                        <select>
-
-                            <option>UPI</option>
-                            <option>Cash</option>
-                            <option>Card</option>
-
-                        </select>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <td>Amount</td>
-
-                    <td><input type="number" value="450"></td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </section>
-
-    <!--============================
-            AI CONFIDENCE
-    =============================-->
-
-    <section class="confidence-card">
-
-        <h2>OCR Confidence</h2>
-
-        <div class="confidence-bar">
-
-            <div class="confidence-fill"></div>
-
-        </div>
-
-        <span>96% Accurate</span>
-
-    </section>
-
-    <!--============================
-            ACTION BUTTONS
-    =============================-->
-
-    <section class="action-buttons">
-
-        <button class="save-btn">
-
-            Save Expense
-
-        </button>
-
-        <button class="clear-btn">
-
-            Clear
-
-        </button>
-
-    </section>
-
-</main>
+</div>
 
 </body>
 </html>

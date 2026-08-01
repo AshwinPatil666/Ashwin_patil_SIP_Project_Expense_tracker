@@ -4,71 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account | SpendWise</title>
-    <link rel ="stylesheet" href ="registor.css">
-    <script src="registor.js"defer></script>
-    
+    <link rel="stylesheet" href="registor.css">
+    <script src="registor.js" defer></script>
 </head>
 <body>
-    <div class="registration">
-        
-        <div class="logo">
-            <img src="logo.jpeg" alt="SpendWise Logo">
-        </div>
+<div class="registration">
 
-        <h2>Create New Account</h2>
-      <form onsubmit="event.preventDefault(); registerUser();">
-            <label for ="name" >Your Name</label>
-            <input type="text"
-            id="name"
-            name="name"
-            placeholder="Enter your name"
-            autocomplete="name"
-            required >
+    <div class="registration-container">
+        <div class="registration-box">
+            
+            <!-- Logo Section -->
+            <div class="logo">
+                <img src="logo.jpeg" alt="SpendWise Logo">
+            </div>
 
-            <label for ="email">Enter Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Enter your email"
-                autocomplete="email"
-                required
-            >
-             <label for="New_password">New Password</label>
-            <input
-                type="password"
-                id="New_password"
-                name="password"
-                placeholder="Enter your password"
-                autocomplete="new-password"
-                required
-            >
-             <label for="Confirm_password">Confirm Password</label>
-            <input
-                type="password"
-                id="Confirm_password"
-                name="Confirm_password"
-                placeholder="Confirm password"
-                autocomplete="new-password"
-                required
-            >
-            <input type="checkbox" id="terms" required>
-                  <label for="terms">
-                      I agree to the Terms & Conditions
-                   </label> 
-            <button type="submit">Create Account</button>
-                    <p>Or</p>
-             <button type="submit">
+            <h2>Create New Account</h2>
+            <p class="subtitle">Start managing your expenses smartly today.</p>
+
+            <!-- Registration Form -->
+            <form onsubmit="event.preventDefault(); registerUser();">
+                
+                <div class="input-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your name" autocomplete="name" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" autocomplete="email" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="New_password">New Password</label>
+                    <input type="password" id="New_password" name="password" placeholder="Enter your password" autocomplete="new-password" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="Confirm_password">Confirm Password</label>
+                    <input type="password" id="Confirm_password" name="Confirm_password" placeholder="Confirm password" autocomplete="new-password" required>
+                </div>
+
+                <!-- Terms & Conditions Checkbox -->
+                <div class="terms-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to the <a href="#" target="_blank">Terms & Conditions</a></label>
+                </div>
+
+                <!-- Action Buttons -->
+                <button type="submit" class="primary-btn">Create Account</button>
+                
+                <div class="divider">
+                    <span>Or</span>
+                </div>
+
+                <button type="button" class="google-btn">
                     Sign in with Google
                 </button>
 
-<p>
-    Already have an account?
-    <a href="login.html">Login</a>
-</p>
-        </form>
-         
+                <!-- Footer Login Link -->
+                <p class="login-redirect">
+                    Already have an account? <a href="login.html">Login</a>
+                </p>
 
+            </form>
+        </div>
     </div>
+    
+</div>
 </body>
 </html>

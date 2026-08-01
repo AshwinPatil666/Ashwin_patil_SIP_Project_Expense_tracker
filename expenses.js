@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // A. User Authentication check
     const userId = localStorage.getItem("currentUserId");
     if (!userId) {
-        alert("Pehle login karein!");
+        alert("Please login first!");
         window.location.href = "login.html";
         return;
     }
@@ -51,7 +51,7 @@ async function loadUserExpenses() {
             renderChart(); 
         }
     } catch (error) {
-        console.error("Data load nahi ho paya:", error);
+        console.error("Error occurred while loading expenses:", error);
     }
 }
 
@@ -109,7 +109,7 @@ function updateSummary() {
 // 6. DELETE EXPENSE LOGIC
 // ==========================================
 window.deleteExpense = function(index) {
-    if(confirm("Kya aap sach me ye kharcha delete karna chahte hain?")) {
+    if(confirm("Are you sure you want to delete this expense?")) {
         expenses.splice(index, 1); 
         renderExpenseTable(expenses); 
         updateSummary(); 

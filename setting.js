@@ -1,0 +1,153 @@
+// ==========================================
+// 1. INITIALIZATION & DATA LOADING
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    // A. Authentication check
+    const userId = localStorage.getItem("currentUserId");
+    if (!userId) {
+        alert("Please login first!");
+        window.location.href = "login.html";
+        return;
+    }
+
+    // B. Display user email on profile header
+    const savedEmail = localStorage.getItem("userEmail");
+    const emailSpan = document.getElementById("user-display-email");
+    if (savedEmail && emailSpan) {
+        emailSpan.innerText = `👤 ${savedEmail}`;
+    }
+
+    // C. Load existing settings data into form fields
+    loadUserSettings();
+});
+
+// ==========================================
+// 2. LOAD USER SETTINGS DATA
+// ==========================================
+function loadUserSettings() {
+    const savedName = localStorage.getItem("userName") || "";
+    const savedEmail = localStorage.getItem("userEmail") || "";
+    const savedCurrency = localStorage.getItem("spendwise_currency") || "INR";
+    const emailNotifStatus = localStorage.getItem("spendwise_email_notif");
+
+    // Populate inputs if they exist
+    const nameInput = document.getElementById("setting-name");
+    const emailInput = document.getElementById("setting-email");
+    const currencySelect = document.getElementById("currency-select");
+    const notifCheckbox = document.getElementById("email-notif");
+
+    if (nameInput) nameInput.value = savedName;
+    if (emailInput) emailInput.value = savedEmail;
+    if (currencySelect) currencySelect.value = savedCurrency;
+    
+    if (notifCheckbox) {
+        notifCheckbox.checked = emailNotifStatus !== "false"; // default true
+    }
+}
+
+// ==========================================
+// 3. UPDATE PROFILE DETAILS
+// ==========================================
+async function updateProfile() {
+    const nameInput = document.getElementById("setting-name");
+    const newName = nameInput ? nameInput.value.trim() : "";
+    const userId = localStorage.getItem("currentUserId");
+
+    if (!newName) {
+        alert("Name cannot be empty!");
+        return;
+    }
+
+    try {
+        // Local storage update
+        localStorage.setItem("userName", newName);
+        
+        // Optional: Agar aap backend par bhi update bhejna chahte hain toh yahan API call laga sakte hain
+        /*
+        const response = await fetch(`http://localhost:5000/api/users/update/${userId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newName })
+        });
+        if (!response.ok) throw new Error("Failed to update profile on server");
+        */
+
+        alert("Profile updated successfully!");
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        alert("Something went wrong while updating profile.");
+    }
+}
+
+// ==========================================
+// 4. UPDATE PASSWORD
+// ==========================================
+async function updatePassword() {
+    const currentPasswordInput = document.getElementById("current-password");
+    const newPasswordInput = document.getElementById("new-password");
+
+    const currentPassword = currentPasswordInput.value;
+    const newPassword = newPasswordInput.value;
+    const userId = localStorage.getItem("currentUserId");
+
+    if (!currentPassword || !newPassword) {
+        alert("Please fill in both password fields!");
+        return;
+    }
+
+    if (newPassword.length < 6) {
+        alert("New password must be at least 6 characters long.");
+        return;
+    }
+
+    try {
+        // Backend API call to update password in MongoDB
+        const response = await fetch('http://localhost:5000/api/users/update-password', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, currentPassword, newPassword })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert("Password updated successfully!");
+            currentPasswordInput.value = "";
+            newPasswordInput.value = "";
+        } else {
+            alert(data.message || "Failed to update password. Check your current password.");
+        }
+    } catch (error) {
+        console.error("Error updating password:", error);
+        alert("Server error. Please try again later.");
+    }
+}
+
+// ==========================================
+// 5. SAVE PREFERENCES (Currency & Notifications)
+// ==========================================
+function savePreferences() {
+    const currencySelect = document.getElementById("currency-select");
+    const notifCheckbox = document.getElementById("email-notif");
+
+    const selectedCurrency = currencySelect ? currencySelect.value : "INR";
+    const isEmailNotifEnabled = notifCheckbox ? notifCheckbox.checked : true;
+
+    // Save preferences in localStorage so other pages (Dashboard, Expenses, Budget) can use them
+    localStorage.setItem("spendwise_currency", selectedCurrency);
+    localStorage.setItem("spendwise_email_notif", isEmailNotifEnabled);
+
+    alert("Preferences saved successfully!");
+}
+
+// ==========================================
+// 6. LOGOUT FUNCTION
+// ==========================================
+function logoutUser() {
+    if (confirm("Are you sure you want to logout?")) {
+        localStorage.removeItem("currentUserId");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userName");
+        window.location.href = "login.html";
+    }
+}

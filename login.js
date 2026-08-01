@@ -31,12 +31,12 @@ async function loginUser() {
             window.location.href = "dashboard.html"; 
         } else {
             // Agar email nahi mila ya password galat hua toh alert dikhayega
-            alert("Login Fail: " + result.error);
+            alert("Login Faile: " + result.error);
         }
 
     } catch (error) {
-        console.error("Backend se connect nahi ho paya:", error);
-        alert("Server se connection fail ho gaya. Kya Express chalu hai?");
+        console.error("Error occurred while logging in:", error);
+        alert("Please check your backend server. Login failed.");
     }
 }
 // Login hone ke baad

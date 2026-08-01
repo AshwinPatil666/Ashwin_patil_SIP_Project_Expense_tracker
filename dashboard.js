@@ -2,7 +2,9 @@
 // 1. GLOBAL VARIABLES & INITIALIZATION
 // ==========================================
 let transactions = [];
-let myExpenseChart = null; // To avoid chart overlapping issues
+let globalTransactions = [];
+let currentFilter = 'monthly';
+let myExpenseChart = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     // A. User Authentication check
@@ -86,14 +88,16 @@ async function loadDashboardData() {
 
         if (response.ok && Array.isArray(data)) {
             transactions = data; 
+            globalTransactionsForCharts = data;
+            
             updateDashboard(); 
-            renderExpenseChart(transactions); // Render interactive chart with live data
+            renderAllCharts(transactions); 
+            renderRecentTransactions(transactions); // <-- Yeh line yahan add kar dein
         }
     } catch (error) {
         console.error("Failed to load dashboard data:", error);
     }
 }
-
 // ==========================================
 // 4. DASHBOARD MATH LOGIC (Synced with Budget)
 // ==========================================
@@ -104,93 +108,163 @@ function updateDashboard() {
         totalExpense += Number(item.amount) || 0;
     });
 
-    // Universal key used in budget page as well
     const totalBudget = Number(localStorage.getItem("spendwise_monthly_budget")) || 50000;
     let currentBalance = totalBudget - totalExpense; 
 
-    // Update values in HTML cards
+    // HTML elements update karein
     const cardValues = document.querySelectorAll('.card h2');
     
     if(cardValues.length >= 3) {
-        cardValues[0].innerText = "₹" + totalExpense.toLocaleString();     // Total Expense
-        cardValues[1].innerText = "₹" + totalBudget.toLocaleString();     // Total Budget
-        cardValues[2].innerText = "₹" + currentBalance.toLocaleString();  // Remaining Balance
+        cardValues[0].innerText = "₹" + totalExpense.toLocaleString();    // Total Expense
+        cardValues[1].innerText = "₹" + totalBudget.toLocaleString();    // Total Budget
+        cardValues[2].innerText = "₹" + currentBalance.toLocaleString();  // Remaining / Balance
+    }
+
+    // Agar alag se Savings card ke liye id di hai toh use yahan update karein:
+    const savingsEl = document.getElementById("ui-savings");
+    if (savingsEl) {
+        // Savings = Budget - Expense (ya agar koi alag logic hai toh yahan likh sakte hain)
+        let savings = totalBudget - totalExpense;
+        savingsEl.innerText = "₹" + (savings > 0 ? savings.toLocaleString() : 0);
     }
 }
+// ==========================================
+// 5. CHART FILTER & RENDER LOGIC
+let myCategoryChart = null;
+let myTrendChart = null;
+let currentTrendType = 'monthly'; // Default monthly
+let globalTransactionsForCharts = [];
 
-// ==========================================
-// 5. RENDER EXPENSE CHART (Chart.js Integration)
-// ==========================================
-// ==========================================
-// 5. RENDER EXPENSE CHART (Clean Chart.js Integration)
-// ==========================================
-function renderExpenseChart(expenses) {
-    const ctx = document.getElementById('expenseChart');
+// Data milne par dono charts ko call karne ka function
+function renderAllCharts(expenses) {
+    globalTransactionsForCharts = expenses;
+    renderCategoryDoughnutChart(expenses);
+    renderTrendBarChart(expenses);
+}
+
+// 1. Category Breakdown Doughnut Chart
+function renderCategoryDoughnutChart(expenses) {
+    const ctx = document.getElementById('categoryChart');
     if (!ctx) return;
 
-    // Dynamically generate category totals from actual data (No hardcoding bugs)
     const categoryTotals = {};
-
     expenses.forEach(item => {
         const amt = Number(item.amount) || 0;
         const cat = item.category ? item.category.trim() : "General";
-        
         categoryTotals[cat] = (categoryTotals[cat] || 0) + amt;
     });
 
     const categories = Object.keys(categoryTotals);
     const amounts = Object.values(categoryTotals);
 
-    // Destroy previous chart instance if it exists
-    if (window.myExpenseChart) {
-        window.myExpenseChart.destroy();
+    if (myCategoryChart) {
+        myCategoryChart.destroy();
     }
 
-    // Modern color palette generator for dynamic categories
-    const colorPalette = [
-        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', 
-        '#ec4899', '#06b6d4', '#84cc16', '#14532d'
-    ];
+    const colorPalette = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
 
-    window.myExpenseChart = new Chart(ctx, {
+    myCategoryChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: categories,
+            labels: categories.length > 0 ? categories : ['No Data'],
             datasets: [{
-                label: 'Expenses (₹)',
-                data: amounts,
-                backgroundColor: colorPalette.slice(0, categories.length),
+                data: amounts.length > 0 ? amounts : [1],
+                backgroundColor: categories.length > 0 ? colorPalette.slice(0, categories.length) : ['#e2e8f0'],
                 borderWidth: 2,
-                borderColor: '#ffffff',
-                hoverOffset: 6
+                borderColor: '#ffffff'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 15,
-                        usePointStyle: true,
-                        font: {
-                            size: 12,
-                            family: "'Poppins', sans-serif"
-                        }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: '#1e293b',
-                    padding: 12,
-                    cornerRadius: 8
-                }
+                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
             },
-            cutout: '68%'
+            cutout: '65%'
         }
     });
 }
 
+// 2. Daily / Monthly Trend Filter Button Handler
+function switchTrendFilter(type) {
+    currentTrendType = type;
+    
+    // Style switch
+    document.getElementById('btn-trend-daily').style.background = type === 'daily' ? '#16a34a' : 'white';
+    document.getElementById('btn-trend-daily').style.color = type === 'daily' ? 'white' : '#16a34a';
+
+    document.getElementById('btn-trend-monthly').style.background = type === 'monthly' ? '#16a34a' : 'white';
+    document.getElementById('btn-trend-monthly').style.color = type === 'monthly' ? 'white' : '#16a34a';
+
+    renderTrendBarChart(globalTransactionsForCharts);
+}
+
+// 3. Daily & Monthly Trend Bar Chart Logic
+function renderTrendBarChart(expenses) {
+    const ctx = document.getElementById('trendChart');
+    if (!ctx) return;
+
+    let labels = [];
+    let dataValues = [];
+
+    if (currentTrendType === 'daily') {
+        // Pichle 7 dino ka data group karein ya daily basis par
+        const dailyMap = {};
+        expenses.forEach(item => {
+            const dateStr = item.date ? item.date.split('T')[0] : 'Unknown';
+            const amt = Number(item.amount) || 0;
+            dailyMap[dateStr] = (dailyMap[dateStr] || 0) + amt;
+        });
+        labels = Object.keys(dailyMap).sort().slice(-7); // Aakhiri 7 din
+        dataValues = labels.map(date => dailyMap[date]);
+    } else {
+        // Monthly trend breakdown
+        const monthlyMap = {};
+        expenses.forEach(item => {
+            // Agar date format available hai toh month nikal lo, warna general
+            let monthName = "Current Month";
+            if(item.date) {
+                const d = new Date(item.date);
+                if(!isNaN(d)) {
+                    monthName = d.toLocaleString('default', { month: 'short', year: '2-digit' });
+                } else {
+                    monthName = item.date; // agar format '25 Jul' jaisa hai
+                }
+            }
+            const amt = Number(item.amount) || 0;
+            monthlyMap[monthName] = (monthlyMap[monthName] || 0) + amt;
+        });
+        labels = Object.keys(monthlyMap);
+        dataValues = labels.map(m => monthlyMap[m]);
+    }
+
+    if (myTrendChart) {
+        myTrendChart.destroy();
+    }
+
+    myTrendChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels.length > 0 ? labels : ['No Data'],
+            datasets: [{
+                label: `${currentTrendType.toUpperCase()} Expenses (₹)`,
+                data: dataValues.length > 0 ? dataValues : [0],
+                backgroundColor: '#16a34a',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+}
 // ==========================================
 // 6. ADD TRANSACTION MODAL (POPUP) LOGIC
 // ==========================================
@@ -226,7 +300,7 @@ if(form) {
             category: category,
             payment: "UPI",
             amount: amount,
-            date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+            date: new Date().toISOString(), // Standard date format for comparison
             status: "Paid"
         };
 
@@ -239,8 +313,9 @@ if(form) {
 
             if (response.ok) {
                 transactions.unshift(newExpense);
+                globalTransactions = transactions;
                 updateDashboard();
-                renderExpenseChart(transactions); // Update chart live on new expense addition
+                processAndRenderChart(transactions); 
                 modal.style.display = "none";
                 form.reset();
             } else {
@@ -249,5 +324,56 @@ if(form) {
         } catch (error) {
             console.error("Error saving transaction:", error);
         }
+    });
+}
+myTrendChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels.length > 0 ? labels : ['No Data'],
+            datasets: [{
+                label: `${currentTrendType.toUpperCase()} Expenses (₹)`,
+                data: dataValues.length > 0 ? dataValues : [0],
+                backgroundColor: '#16a34a',
+                borderRadius: 6,
+                maxBarThickness: 40 // <-- Yeh line pillars ki max width ko limit kar degi taaki wo mote na ho
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+    // Recent Transactions ko dynamic render karne ka function
+function renderRecentTransactions(expenses) {
+    const tbody = document.getElementById("recent-transactions-tbody");
+    if (!tbody) return;
+
+    tbody.innerHTML = ""; // Purana dummy data clear kar do
+
+    if (!expenses || expenses.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #64748b;">No transactions found</td></tr>`;
+        return;
+    }
+
+    // Latest transactions ko upar dikhane ke liye slice ya sort kar sakte hain (aakhiri 5 transactions)
+    const recentData = [...expenses].reverse().slice(0, 5);
+
+    recentData.forEach(item => {
+        // Date formatting safely
+        let formattedDate = item.date ? item.date.split('T')[0] : "Recent";
+        
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${formattedDate}</td>
+            <td>${item.category || 'General'}</td>
+            <td style="color: #ef4444; font-weight: 600;">-₹${Number(item.amount || 0).toLocaleString()}</td>
+        `;
+        tbody.appendChild(row);
     });
 }

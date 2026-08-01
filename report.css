@@ -4,753 +4,435 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 /*==================================================
-                CSS VARIABLES
+        CSS VARIABLES (Exact match with expense.css)
 ==================================================*/
+:root {
+    --primary: #22c55e;
+    --primary-dark: #15803d;
+    --primary-light: #86efac;
 
-:root{
+    --bg-dark: #0f172a;
+    --bg-green: #14532d;
 
-    --primary:#22c55e;
-    --primary-dark:#15803d;
-    --primary-light:#86efac;
+    --white: #118249;
 
-    --bg-dark:#050816;
-    --bg-green:#052e16;
+    --text: #0d4f13;
+   
 
-    --white:#ffffff;
+    --card: rgb(255, 248, 248);
 
-    --text:#e5e7eb;
-    --text-light:#9ca3af;
+    --border: rgb(18, 66, 30);
 
-    --card:rgba(255,255,255,.08);
+    --shadow: 0 15px 35px rgba(0,0,0,.45);
 
-    --border:rgba(255,255,255,.12);
+    --radius: 20px;
 
-    --shadow:0 15px 35px rgba(0,0,0,.45);
-
-    --radius:20px;
-
-    --transition:.35s ease;
-
+    --transition: .35s ease;
 }
 
 /*==================================================
                     RESET
 ==================================================*/
-
-*{
-
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
-html{
-
-    scroll-behavior:smooth;
-
+html {
+    scroll-behavior: smooth;
 }
 
-body{
-
-    min-height:100vh;
-
-    background:
-    linear-gradient(
+body {
+    min-height: 100vh;
+    background: linear-gradient(
         135deg,
         var(--bg-dark),
-        #071b13,
+        #081b12,
         var(--bg-green)
     );
-
-    color:var(--white);
-
+    color: var(--text);
 }
 
 /*==================================================
                 MAIN CONTAINER
 ==================================================*/
-
-.reports-page{
-
-    width:min(1400px,92%);
-    margin:auto;
-    padding:40px 0;
-
+.reports-page {
+    width: min(1400px, 92%);
+    margin: auto;
+    padding: 40px 0;
 }
 
 /*==================================================
-                GLASS CARDS
+            CLEAN WHITE CARDS (Expense Style)
 ==================================================*/
-
 .report-card,
 .report-filter,
 .chart-card,
 .report-table,
 .insight-card,
-.recommendation-card{
-
-    background:var(--card);
-
-    backdrop-filter:blur(18px);
-
-    border:1px solid var(--border);
-
-    border-radius:var(--radius);
-
-    box-shadow:var(--shadow);
-
+.recommendation-card {
+    background: var(--card);
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
 }
 
 /*==================================================
                 PAGE HEADER
 ==================================================*/
-
-.page-header{
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:35px;
-
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
 }
 
-.page-header h1{
-
-    font-size:38px;
-    margin-bottom:10px;
-
+.page-header h1 {
+    font-size: 38px;
+    color: white;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 8px;
 }
 
-.page-header p{
-
-    color:var(--text-light);
-
+.page-header h1::after {
+    content: "";
+    display: block;
+    width: 90px;
+    height: 4px;
+    margin-top: 10px;
+    border-radius: 20px;
+    background: linear-gradient(to right, var(--primary-light), var(--primary));
 }
 
-.header-buttons{
+.page-header p {
+    color: #e2e8f0;
+    font-size: 0.95rem;
+}
 
-    display:flex;
-    gap:15px;
-
+.header-buttons {
+    display: flex;
+    gap: 15px;
 }
 
 /*==================================================
                 BUTTONS
 ==================================================*/
-
 .pdf-btn,
 .csv-btn,
-.filter-btn{
-
-    border:none;
-
-    cursor:pointer;
-
-    padding:14px 28px;
-
-    border-radius:14px;
-
-    color:var(--white);
-
-    font-size:15px;
-
-    font-weight:600;
-
-    transition:var(--transition);
-
+.filter-btn {
+    border: none;
+    cursor: pointer;
+    padding: 14px 28px;
+    border-radius: 14px;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    transition: var(--transition);
+    box-shadow: 0 10px 25px rgba(34,197,94,.35);
 }
 
-.pdf-btn{
-
-    background:
-    linear-gradient(
-        135deg,
-        #dc2626,
-        #991b1b
-    );
-
+.pdf-btn {
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+    box-shadow: 0 10px 25px rgba(220,38,38,.35);
 }
 
 .csv-btn,
-.filter-btn{
-
-    background:
-    linear-gradient(
-        135deg,
-        var(--primary),
-        var(--primary-dark)
-    );
-
+.filter-btn {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
 
 .pdf-btn:hover,
 .csv-btn:hover,
-.filter-btn:hover{
-
-    transform:translateY(-4px);
-
+.filter-btn:hover {
+    transform: translateY(-4px);
+    filter: brightness(1.1);
 }
 
 /*==================================================
                 SUMMARY GRID
 ==================================================*/
-
-.report-summary{
-
-    display:grid;
-
-    grid-template-columns:repeat(4,1fr);
-
-    gap:25px;
-
-    margin-bottom:35px;
-
+.report-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 35px;
 }
 
 /*==================================================
                 SUMMARY CARD
 ==================================================*/
-
-.report-card{
-
-    position:relative;
-
-    overflow:hidden;
-
-    padding:30px;
-
-    transition:var(--transition);
-
+.report-card {
+    position: relative;
+    overflow: hidden;
+    padding: 30px;
+    transition: var(--transition);
 }
 
-.report-card::before{
-
-    content:"";
-
-    position:absolute;
-
-    top:0;
-    left:0;
-
-    width:100%;
-    height:5px;
-
-    background:
-    linear-gradient(
-        to right,
-        var(--primary-light),
-        var(--primary)
-    );
-
+.report-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, var(--primary-light), var(--primary));
 }
 
-.report-card:hover{
-
-    transform:translateY(-8px);
-
-    border-color:rgba(34,197,94,.4);
-
+.report-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(34, 197, 94, .5);
 }
 
-.report-card h3{
-
-    color:var(--text-light);
-
-    margin-bottom:15px;
-
-    font-size:15px;
-
+.report-card h3 {
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 15px;
 }
 
-.report-card h2{
-
-    font-size:34px;
-
-    color:var(--white);
-
+.report-card h2 {
+    font-size: 34px;
+    color: var(--text);
+    margin-bottom: 10px;
 }
 
 /*==================================================
                 FILTER SECTION
 ==================================================*/
-
-.report-filter{
-
-    display:grid;
-
-    grid-template-columns:repeat(4,1fr);
-
-    gap:20px;
-
-    padding:25px;
-
-    margin-bottom:35px;
-
+.report-filter {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 25px;
+    margin-bottom: 35px;
 }
 
 .report-filter input,
-.report-filter select{
-
-    width:100%;
-
-    padding:14px 18px;
-
-    border:1px solid var(--border);
-
-    outline:none;
-
-    border-radius:12px;
-
-    background:rgba(255,255,255,.08);
-
-    color:var(--white);
-
-    transition:var(--transition);
-
+.report-filter select {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid #cbd5e1;
+    outline: none;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: var(--text);
+    font-size: 0.95rem;
+    transition: var(--transition);
 }
 
 .report-filter input:focus,
-.report-filter select:focus{
-
-    border-color:var(--primary);
-
-    box-shadow:0 0 12px rgba(34,197,94,.25);
-
+.report-filter select:focus {
+    border-color: var(--primary);
+    background: #ffffff;
+    box-shadow: 0 0 12px rgba(34, 197, 94, .25);
 }
 
-.report-filter select option{
-
-    background:#0b1f15;
-
-    color:var(--white);
-
+.report-filter select option {
+    background: #ffffff;
+    color: #334155;
 }
 
 /*==================================================
                 CHART SECTION
 ==================================================*/
-
-.charts{
-
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    gap:25px;
-
-    margin-bottom:35px;
-
+.charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 35px;
 }
 
-.chart-card{
-
-    padding:30px;
-
-    min-height:350px;
-
-    transition:var(--transition);
-
+.chart-card {
+    padding: 30px;
+    min-height: 350px;
+    transition: var(--transition);
 }
 
-.chart-card:hover{
-
-    transform:translateY(-6px);
-
+.chart-card:hover {
+    transform: translateY(-6px);
 }
 
-.chart-card h2{
-
-    margin-bottom:20px;
-
-    color:var(--white);
-
+.chart-card h2 {
+    margin-bottom: 20px;
+    color: var(--text);
+    font-size: 22px;
 }
 
 /*==================================================
-                RESPONSIVE
-==================================================*/
-
-@media(max-width:992px){
-
-    .report-summary{
-
-        grid-template-columns:repeat(2,1fr);
-
-    }
-
-    .charts{
-
-        grid-template-columns:1fr;
-
-    }
-
-}
-
-@media(max-width:700px){
-
-    .page-header{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
-        gap:20px;
-
-    }
-
-    .header-buttons{
-
-        width:100%;
-
-        flex-direction:column;
-
-    }
-
-    .pdf-btn,
-    .csv-btn{
-
-        width:100%;
-
-    }
-
-    .report-summary{
-
-        grid-template-columns:1fr;
-
-    }
-
-    .report-filter{
-
-        grid-template-columns:1fr;
-
-    }
-
-}/*==================================================
                 REPORT TABLE
 ==================================================*/
-
-.report-table{
-
-    padding:30px;
-
-    margin-bottom:35px;
-
-    overflow-x:auto;
-
+.report-table {
+    padding: 30px;
+    margin-bottom: 35px;
+    overflow-x: auto;
 }
 
-.report-table h2{
-
-    margin-bottom:20px;
-
-    color:var(--white);
-
+.report-table h2 {
+    margin-bottom: 20px;
+    color: var(--text);
+    font-size: 24px;
 }
 
-.report-table table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
+.report-table table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.report-table thead{
-
-    background:
-    linear-gradient(
-        135deg,
-        var(--primary),
-        var(--primary-dark)
-    );
-
+.report-table thead {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
 
-.report-table th{
-
-    padding:18px;
-
-    text-align:left;
-
-    color:var(--white);
-
-    font-size:15px;
-
-    font-weight:600;
-
+.report-table th {
+    padding: 18px;
+    text-align: left;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
 }
 
-.report-table td{
-
-    padding:18px;
-
-    color:var(--text);
-
-    border-bottom:1px solid rgba(255,255,255,.08);
-
+.report-table td {
+    padding: 18px;
+    color: var(--text);
+    border-bottom: 1px solid rgba(0, 0, 0, .08);
 }
 
-.report-table tbody tr{
-
-    transition:var(--transition);
-
+.report-table tbody tr {
+    transition: var(--transition);
 }
 
-.report-table tbody tr:nth-child(even){
-
-    background:rgba(255,255,255,.03);
-
+.report-table tbody tr:nth-child(even) {
+    background: rgba(0, 0, 0, .02);
 }
 
-.report-table tbody tr:hover{
-
-    background:rgba(34,197,94,.10);
-
+.report-table tbody tr:hover {
+    background: rgba(34, 197, 94, .10);
 }
-
 
 /*==================================================
                 STATUS BADGES
 ==================================================*/
-
-.status-completed{
-
-    display:inline-block;
-
-    padding:6px 14px;
-
-    border-radius:50px;
-
-    background:rgba(34,197,94,.18);
-
-    color:#86efac;
-
-    font-size:13px;
-
-    font-weight:600;
-
+.status-completed {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 50px;
+    background: rgba(34, 197, 94, .18);
+    color: #15803d;
+    font-size: 13px;
+    font-weight: 600;
 }
 
-.status-pending{
-
-    display:inline-block;
-
-    padding:6px 14px;
-
-    border-radius:50px;
-
-    background:rgba(245,158,11,.18);
-
-    color:#fde68a;
-
-    font-size:13px;
-
-    font-weight:600;
-
+.status-pending {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 50px;
+    background: rgba(245, 158, 11, .18);
+    color: #b45309;
+    font-size: 13px;
+    font-weight: 600;
 }
 
-.status-failed{
-
-    display:inline-block;
-
-    padding:6px 14px;
-
-    border-radius:50px;
-
-    background:rgba(220,38,38,.18);
-
-    color:#fca5a5;
-
-    font-size:13px;
-
-    font-weight:600;
-
+.status-failed {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 50px;
+    background: rgba(220, 38, 38, .18);
+    color: #b91c1c;
+    font-size: 13px;
+    font-weight: 600;
 }
-
 
 /*==================================================
                 BOTTOM SECTION
 ==================================================*/
-
-.report-bottom{
-
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    gap:25px;
-
+.report-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
 }
-
 
 /*==================================================
-                INSIGHT CARD
+            INSIGHT & RECOMMENDATION CARDS
 ==================================================*/
-
-.insight-card{
-
-    padding:30px;
-
+.insight-card,
+.recommendation-card {
+    padding: 30px;
 }
 
-.insight-card h2{
-
-    margin-bottom:20px;
-
+.insight-card h2,
+.recommendation-card h2 {
+    margin-bottom: 20px;
+    color: var(--text);
+    font-size: 22px;
 }
 
-.insight-card ul{
-
-    list-style:none;
-
+.insight-card ul,
+.recommendation-card ul {
+    list-style: none;
 }
 
-.insight-card li{
-
-    padding:16px 0;
-
-    color:var(--text);
-
-    border-bottom:1px solid rgba(255,255,255,.08);
-
-    transition:var(--transition);
-
+.insight-card li,
+.recommendation-card li {
+    padding: 16px 0;
+    color: var(--text);
+    border-bottom: 1px solid rgba(0, 0, 0, .08);
+    transition: var(--transition);
 }
 
-.insight-card li:last-child{
-
-    border-bottom:none;
-
+.insight-card li:last-child,
+.recommendation-card li:last-child {
+    border-bottom: none;
 }
 
-.insight-card li:hover{
-
-    color:var(--primary-light);
-
-    padding-left:10px;
-
+.insight-card li:hover,
+.recommendation-card li:hover {
+    color: var(--primary-dark);
+    padding-left: 10px;
 }
-
-
-/*==================================================
-            RECOMMENDATION CARD
-==================================================*/
-
-.recommendation-card{
-
-    padding:30px;
-
-}
-
-.recommendation-card h2{
-
-    margin-bottom:20px;
-
-}
-
-.recommendation-card ul{
-
-    list-style:none;
-
-}
-
-.recommendation-card li{
-
-    padding:16px 0;
-
-    color:var(--text);
-
-    border-bottom:1px solid rgba(255,255,255,.08);
-
-    transition:var(--transition);
-
-}
-
-.recommendation-card li:last-child{
-
-    border-bottom:none;
-
-}
-
-.recommendation-card li:hover{
-
-    color:var(--primary-light);
-
-    padding-left:10px;
-
-}
-
 
 /*==================================================
                 PREMIUM SCROLLBAR
 ==================================================*/
-
-::-webkit-scrollbar{
-
-    width:10px;
-
-    height:10px;
-
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
 }
 
-::-webkit-scrollbar-track{
-
-    background:#07150d;
-
+::-webkit-scrollbar-track {
+    background: #07150d;
 }
 
-::-webkit-scrollbar-thumb{
-
-    background:var(--primary);
-
-    border-radius:20px;
-
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 20px;
 }
 
-::-webkit-scrollbar-thumb:hover{
-
-    background:var(--primary-light);
-
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-light);
 }
-
 
 /*==================================================
                 TEXT SELECTION
 ==================================================*/
-
-::selection{
-
-    background:var(--primary);
-
-    color:var(--white);
-
+::selection {
+    background: var(--primary);
+    color: white;
 }
-
 
 /*==================================================
                 PAGE ANIMATION
 ==================================================*/
-
-@keyframes fadeUp{
-
-    from{
-
-        opacity:0;
-
-        transform:translateY(25px);
-
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
     }
-
-    to{
-
-        opacity:1;
-
-        transform:translateY(0);
-
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-
 }
 
 .report-card,
@@ -758,39 +440,55 @@ body{
 .chart-card,
 .report-table,
 .insight-card,
-.recommendation-card{
-
-    animation:fadeUp .7s ease;
-
+.recommendation-card {
+    animation: fadeUp .7s ease;
 }
-
 
 /*==================================================
                 RESPONSIVE
 ==================================================*/
-
-@media(max-width:900px){
-
-    .report-bottom{
-
-        grid-template-columns:1fr;
-
+@media(max-width: 992px) {
+    .report-summary {
+        grid-template-columns: repeat(2, 1fr);
     }
-
+    .charts {
+        grid-template-columns: 1fr;
+    }
 }
 
-@media(max-width:650px){
-
-    .report-table{
-
-        padding:18px;
-
+@media(max-width: 900px) {
+    .report-bottom {
+        grid-template-columns: 1fr;
     }
+}
 
-    .report-table table{
-
-        min-width:750px;
-
+@media(max-width: 700px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
     }
+    .header-buttons {
+        width: 100%;
+        flex-direction: column;
+    }
+    .pdf-btn,
+    .csv-btn {
+        width: 100%;
+    }
+    .report-summary {
+        grid-template-columns: 1fr;
+    }
+    .report-filter {
+        grid-template-columns: 1fr;
+    }
+}
 
+@media(max-width: 650px) {
+    .report-table {
+        padding: 18px;
+    }
+    .report-table table {
+        min-width: 750px;
+    }
 }

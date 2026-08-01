@@ -7,7 +7,7 @@ async function registerUser() {
 
     // 2. Check karna ki Confirm Password match ho raha hai ya nahi
     if (userPassword !== confirmPassword) {
-        alert("Aapke dono passwords match nahi ho rahe hain. Kripya wapas check karein!");
+        alert("Entered passwords do not match. Please try again.");
         return; // Ye code ko yahin rok dega
     }
 
@@ -32,7 +32,7 @@ async function registerUser() {
         const result = await response.json();
 
         if (response.ok) {
-            alert("Account successfully ban gaya!");
+            alert("Account created successfully!");
             // Account banne ke baad turant login page par bhej dein
             window.location.href = "login.html"; 
         } else {
@@ -40,7 +40,7 @@ async function registerUser() {
         }
 
     } catch (error) {
-        console.error("Backend connection error:", error);
-        alert("Server se connection fail ho gaya. Kya aapka Express chalu hai?");
+        console.error("Error occurred while registering user:", error);
+        alert(" Please check your backend server. Registration failed.");
     }
 }

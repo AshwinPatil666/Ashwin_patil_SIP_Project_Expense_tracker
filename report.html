@@ -5,235 +5,150 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendWise | Reports</title>
     <link rel="stylesheet" href="report.css">
+    <link rel="stylesheet" href="dashboard.css"> <!-- Sidebar ki CSS ke liye yeh zaroori hai -->
+    
     <script src="global-chat.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="sidebar.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-<main class="reports-page">
-
-    <!--==========================
-            PAGE HEADER
-    ===========================-->
-
-    <section class="page-header">
-
-        <div>
-
-            <h1>Financial Reports</h1>
-
-            <p>View detailed expense reports and analytics.</p>
-
-        </div>
-
-        <div class="header-buttons">
-
-            <button class="pdf-btn">Export PDF</button>
-
-            <button class="csv-btn">Export CSV</button>
-
-        </div>
-
-    </section>
-
-    <!--==========================
-            SUMMARY CARDS
-    ===========================-->
-
-    <section class="report-summary">
-
-        <div class="report-card">
-
-            <h3>Total Expense</h3>
-
-            <h2>₹48,500</h2>
-
-        </div>
-
-        <div class="report-card">
-
-            <h3>Total Income</h3>
-
-            <h2>₹75,000</h2>
-
-        </div>
-
-        <div class="report-card">
-
-            <h3>Total Savings</h3>
-
-            <h2>₹26,500</h2>
-
-        </div>
-
-        <div class="report-card">
-
-            <h3>Transactions</h3>
-
-            <h2>132</h2>
-
-        </div>
-
-    </section>
-
-    <!--==========================
-            FILTERS
-    ===========================-->
-
-    <section class="report-filter">
-
-        <input type="date">
-
-        <input type="date">
-
-        <select>
-
-            <option>All Categories</option>
-
-            <option>Food</option>
-
-            <option>Shopping</option>
-
-            <option>Travel</option>
-
-        </select>
-
-        <button class="filter-btn">
-
-            Generate Report
-
-        </button>
-
-    </section>
-
-    <!--==========================
-            CHARTS
-    ===========================-->
-
-    <section class="charts">
-
-        <div class="chart-card">
-
-            <h2>Monthly Expense Chart</h2>
-
-        </div>
-
-        <div class="chart-card">
-
-            <h2>Category Distribution</h2>
-
-        </div>
-
-    </section>
-
-    <!--==========================
-            REPORT TABLE
-    ===========================-->
-
-    <section class="report-table">
-
-        <h2>Recent Reports</h2>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Date</th>
-
-                    <th>Category</th>
-
-                    <th>Amount</th>
-
-                    <th>Payment</th>
-
-                    <th>Status</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <tr>
-
-                    <td>25 Jul</td>
-
-                    <td>Food</td>
-
-                    <td>₹450</td>
-
-                    <td>UPI</td>
-
-                    <td>Completed</td>
-
-                </tr>
-
-                <tr>
-
-                    <td>24 Jul</td>
-
-                    <td>Travel</td>
-
-                    <td>₹820</td>
-
-                    <td>Card</td>
-
-                    <td>Completed</td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </section>
-
-    <!--==========================
-            INSIGHTS
-    ===========================-->
-
-    <section class="report-bottom">
-
-        <div class="insight-card">
-
-            <h2>Key Insights</h2>
-
-            <ul>
-
-                <li>Food is your highest spending category.</li>
-
-                <li>Monthly savings increased by 12%.</li>
-
-                <li>Weekend spending is higher.</li>
-
-                <li>Transport expenses are stable.</li>
-
-            </ul>
-
-        </div>
-
-        <div class="recommendation-card">
-
-            <h2>Recommendations</h2>
-
-            <ul>
-
-                <li>Reduce dining expenses.</li>
-
-                <li>Increase monthly savings.</li>
-
-                <li>Track daily expenses.</li>
-
-                <li>Review reports every week.</li>
-
-            </ul>
-
-        </div>
-
-    </section>
-
-</main>
+<!-- Dashboard wrapper zaroori hai taaki sidebar automatically inject ho sake -->
+<div class="dashboard">
+
+    <main class="reports-page" style="flex: 1; padding: 25px;">
+
+        <!--==========================
+                    PAGE HEADER
+        ===========================-->
+        <section class="page-header">
+            <div>
+                <h1>Financial Reports</h1>
+                <p>View detailed expense reports and analytics.</p>
+            </div>
+            <div class="header-buttons">
+                <button class="pdf-btn">Export PDF</button>
+                <button class="csv-btn">Export CSV</button>
+            </div>
+        </section>
+
+        <!--==========================
+                    SUMMARY CARDS
+        ===========================-->
+        <section class="report-summary">
+            <div class="report-card">
+                <h3>Total Expense</h3>
+                <h2>₹48,500</h2>
+            </div>
+            <div class="report-card">
+                <h3>Total Income</h3>
+                <h2>₹75,000</h2>
+            </div>
+            <div class="report-card">
+                <h3>Total Savings</h3>
+                <h2>₹26,500</h2>
+            </div>
+            <div class="report-card">
+                <h3>Transactions</h3>
+                <h2>132</h2>
+            </div>
+        </section>
+
+        <!--==========================
+                    FILTERS
+        ===========================-->
+        <section class="report-filter">
+            <input type="date">
+            <input type="date">
+            <select>
+                <option>All Categories</option>
+                <option>Food</option>
+                <option>Shopping</option>
+                <option>Travel</option>
+            </select>
+            <button class="filter-btn">Generate Report</button>
+        </section>
+
+        <!--==========================
+                    CHARTS
+        ===========================-->
+        <section class="charts" style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 35px;">
+            <div class="chart-card" style="background: white; padding: 20px; border-radius: 20px;">
+                <h2>Monthly Expense Chart</h2>
+                <div style="height: 280px; position: relative;">
+                    <canvas id="monthlyExpenseChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card" style="background: white; padding: 20px; border-radius: 20px;">
+                <h2>Category Distribution</h2>
+                <div style="height: 280px; position: relative;">
+                    <canvas id="categoryDistributionChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!--==========================
+                    REPORT TABLE
+        ===========================-->
+        <section class="report-table">
+            <h2>Recent Reports</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>25 Jul</td>
+                        <td>Food</td>
+                        <td>₹450</td>
+                        <td>UPI</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>24 Jul</td>
+                        <td>Travel</td>
+                        <td>₹820</td>
+                        <td>Card</td>
+                        <td>Completed</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!--==========================
+                    INSIGHTS
+        ===========================-->
+        <section class="report-bottom">
+            <div class="insight-card">
+                <h2>Key Insights</h2>
+                <ul>
+                    <li>Food is your highest spending category.</li>
+                    <li>Monthly savings increased by 12%.</li>
+                    <li>Weekend spending is higher.</li>
+                    <li>Transport expenses are stable.</li>
+                </ul>
+            </div>
+            <div class="recommendation-card">
+                <h2>Recommendations</h2>
+                <ul>
+                    <li>Reduce dining expenses.</li>
+                    <li>Increase monthly savings.</li>
+                    <li>Track daily expenses.</li>
+                    <li>Review reports every week.</li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+</div>
 
 </body>
 </html>

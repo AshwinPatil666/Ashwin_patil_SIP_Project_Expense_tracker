@@ -30,11 +30,11 @@ app.post('/api/register', async (req, res) => {
         });
 
         await newUser.save();
-        res.status(201).json({ message: "Data successfully MongoDB me save ho gaya!" });
+        res.status(201).json({ message: "Data successfully saved !" });
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Server error aa gayi hai." });
+        res.status(500).json({ error: "Error occurred while registering user." });
     }
 });
 // --- LOGIN API ---
@@ -46,11 +46,11 @@ app.post('/api/login', async (req, res) => {
         const foundUser = await User.findOne({ email: email });
         
         if (!foundUser) {
-            return res.status(404).json({ error: "Ye email registered nahi hai. Pehle account banayein." });
+            return res.status(404).json({ error: "This email is not registered. Please create an account first." });
         }
 
         if (foundUser.password !== password) {
-            return res.status(401).json({ error: "Password galat hai. Wapas try karein." });
+            return res.status(401).json({ error: "Invalid password. Please try again." });
         }
 
         // 👉 NAYA: Login successful hone par message ke sath user ki _id bhi bhejein
@@ -61,7 +61,7 @@ app.post('/api/login', async (req, res) => {
 
     } catch (error) {
         console.error("Login me error:", error);
-        res.status(500).json({ error: "Server me koi dikkat aayi hai" });
+        res.status(500).json({ error: "Error occurred while logging in." });
     }
 });
 // File ke shuru me apne naye model ko import karein (agar nahi kiya hai toh)
@@ -72,18 +72,18 @@ const Expense = require('./model/expense');
 // ==========================================
 app.post('/api/add-expense', async (req, res) => {
     try {
-        console.log("Backend ko data mil gaya:", req.body); // 👉 Ye line yahan hai ya nahi?
+        console.log("Received expense data:", req.body); // 👉 Ye line yahan hai ya nahi?
 
         const expenseData = req.body;
         const newRecord = new Expense(expenseData);
         await newRecord.save();
 
-        res.status(201).json({ message: "Kharcha successfully save ho gaya!" });
-        console.log("Database me save ho gaya!");
+        res.status(201).json({ message: "Expense added successfully!" });
+        console.log("Your expense data has been saved:", newRecord); // 👉 Ye line yahan hai ya nahi?
 
     } catch (error) {
-        console.log("Error adding expense:", error); // 👉 Agar yahan error aa rahi hai toh kya print ho raha hai?
-        res.status(500).json({ message: "Server me koi dikkat hai" });
+        console.error("Error occurred while adding expense:", error); // 👉 Agar yahan error aa rahi hai toh kya print ho raha hai?
+        res.status(500).json({ message: "Error occurred while adding expense." });
     }
 });
 // ==========================================
