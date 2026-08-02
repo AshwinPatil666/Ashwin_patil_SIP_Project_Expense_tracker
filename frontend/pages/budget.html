@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendWise | Budget</title>
-    <link rel="stylesheet" href="budget.css">
-    <link rel="stylesheet" href="dashboard.css"> <!-- Sidebar aur layout consistency ke liye -->
+    <link rel="icon" type="image/png" href="/src/favicon.png">
+    <link rel="stylesheet" href="/css/budget.css">
+    <link rel="stylesheet" href="/css/dashboard.css"> <!-- Sidebar aur layout consistency ke liye -->
     
-    <script src="budget.js" defer></script>
-    <script src="global-chat.js" defer></script>
-    <script src="sidebar.js" defer></script>
+    <script src="/js/budget.js" defer></script>
+    <script src="/js/global-chat.js" defer></script>
+    <script src="/js/sidebar.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -20,12 +21,7 @@
     <main class="budget-page" style="flex: 1; padding: 25px;">
         
         <!-- User Profile & Logout Header Bar -->
-        <div class="user-profile-header" style="display: flex; justify-content: flex-end; align-items: center; gap: 15px; margin-bottom: 25px; background: white; padding: 12px 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-            <span id="user-display-email" style="font-weight: 600; color: #333; font-size: 0.95rem;"></span>
-            <button onclick="logoutUser()" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
-                Logout
-            </button>
-        </div>
+       
 
         <!-- =========================
                 Page Header
@@ -43,31 +39,31 @@
         <!-- =========================
                 Budget Summary
         ========================== -->
-        <section class="budget-summary">
-            <div class="budget-card">
-                <h3>Total Budget</h3>
-                <h2 id="ui-total-budget">₹50,000</h2>
-                <span>Current Month</span>
-            </div>
+<section class="budget-summary">
+    <div class="budget-card">
+        <h3>Total Budget</h3>
+        <h2 id="ui-total-budget">₹0</h2>
+        <span>Current Month</span>
+    </div>
 
-            <div class="budget-card">
-                <h3>Total Spent</h3>
-                <h2 id="ui-total-spent">₹31,250</h2>
-                <span>62% Used</span>
-            </div>
+    <div class="budget-card">
+        <h3>Total Spent</h3>
+        <h2 id="ui-total-spent">₹0</h2>
+        <span id="ui-percent-used">0% Used</span> <!-- ID ADDED -->
+    </div>
 
-            <div class="budget-card">
-                <h3>Remaining</h3>
-                <h2 id="ui-remaining">₹18,750</h2>
-                <span>38% Left</span>
-            </div>
+    <div class="budget-card">
+        <h3>Remaining</h3>
+        <h2 id="ui-remaining">₹0</h2>
+        <span id="ui-percent-left">100% Left</span> <!-- ID ADDED -->
+    </div>
 
-            <div class="budget-card">
-                <h3>Daily Limit</h3>
-                <h2>₹625</h2>
-                <span>Suggested</span>
-            </div>
-        </section>
+    <div class="budget-card">
+        <h3>Daily Limit</h3>
+        <h2 id="ui-daily-limit">₹0</h2> <!-- ID ADDED -->
+        <span>Suggested</span>
+    </div>
+</section>
 
         <!-- =========================
                 Budget Progress
@@ -75,7 +71,8 @@
         <section class="budget-progress">
             <div class="progress-header">
                 <h2>Monthly Progress</h2>
-                <span id="ui-percent-text">62%</span>
+                      <span id="ui-progress-percent-text">0%</span>
+
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="ui-progress-fill"></div>

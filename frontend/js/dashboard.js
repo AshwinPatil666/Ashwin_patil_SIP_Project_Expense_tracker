@@ -2,28 +2,119 @@
 // 1. GLOBAL VARIABLES & INITIALIZATION
 // ==========================================
 let transactions = [];
-let globalTransactions = [];
-let currentFilter = 'monthly';
-let myExpenseChart = null;
+let globalTransactionsForCharts = [];
+let currentTrendType = 'monthly';
+let myCategoryChart = null;
+let myTrendChart = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-    // A. User Authentication check
-    const userId = localStorage.getItem("currentUserId");
+    // ---------------------------------------------------------
+    // A. User Authentication & LocalStorage Setup
+    // ---------------------------------------------------------
+    const userId = localStorage.getItem("currentUserId") || localStorage.getItem("userId");
     if (!userId) {
         alert("Please login first!");
         window.location.href = "login.html";
         return;
     }
 
-    // B. Display user email on navbar or profile if element exists
-    const savedEmail = localStorage.getItem("userEmail");
-    const emailSpan = document.getElementById("user-display-email");
-    if (savedEmail && emailSpan) {
-        emailSpan.innerText = `👤 ${savedEmail}`;
+    const userName = localStorage.getItem("userName") || localStorage.getItem("userEmail")?.split('@')[0] || "Friend";
+    const userEmail = localStorage.getItem("userEmail") || "user@example.com";
+
+    // ---------------------------------------------------------
+    // B. Navbar Dynamic Time-based Greeting
+    // ---------------------------------------------------------
+    const greetingEl = document.getElementById("user-display-name");
+    if (greetingEl) {
+        const formattedName = userName.charAt(0).toUpperCase() + userName.slice(1);
+        greetingEl.innerText = formattedName;
     }
 
-    // C. Fetch data from MongoDB
-    loadDashboardData();
+    const hours = new Date().getHours();
+    const welcomeHeading = document.getElementById("welcome-user-heading");
+    let timeGreeting = "Welcome back";
+    
+    if (hours < 12) timeGreeting = "Good morning";
+    else if (hours < 17) timeGreeting = "Good afternoon";
+    else timeGreeting = "Good evening";
+
+    if (welcomeHeading) {
+        welcomeHeading.innerHTML = `${timeGreeting}, <span style="color: #16a34a;">${userName}</span>! 👋`;
+    }
+
+    // Display user email on navbar (agar element exist kare)
+    const emailSpan = document.getElementById("user-display-email");
+    if (emailSpan) {
+        emailSpan.innerText = `👤 ${userEmail}`;
+    }
+
+    // ---------------------------------------------------------
+    // C. Profile Avatar Initials (e.g. Ashwin Patil -> AP)
+    // ---------------------------------------------------------
+    const avatarInitialsEl = document.getElementById("avatar-initials");
+    if (avatarInitialsEl && userName) {
+        const parts = userName.trim().split(" ");
+        let initials = parts[0].charAt(0).toUpperCase();
+        if (parts.length > 1) {
+            initials += parts[parts.length - 1].charAt(0).toUpperCase();
+        }
+        avatarInitialsEl.innerText = initials;
+    }
+
+    // Dropdown header name & email update
+    const dropdownNameEl = document.getElementById("dropdown-user-name");
+    const dropdownEmailEl = document.getElementById("dropdown-user-email");
+    if (dropdownNameEl) dropdownNameEl.innerText = userName;
+    if (dropdownEmailEl) dropdownEmailEl.innerText = userEmail;
+
+    // ---------------------------------------------------------
+    // D. Dropdown Menus Toggles (Notification & Profile)
+    // ---------------------------------------------------------
+    const notifBtn = document.getElementById("notif-bell-btn");
+    const notifDropdown = document.getElementById("notif-dropdown");
+    const profileBtn = document.getElementById("profile-avatar-btn");
+    const profileDropdown = document.getElementById("profile-dropdown");
+
+    // Notification Dropdown Toggle
+    if (notifBtn && notifDropdown) {
+        notifBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (profileDropdown) profileDropdown.style.display = "none"; // Close profile menu
+            notifDropdown.style.display = notifDropdown.style.display === "block" ? "none" : "block";
+        });
+    }
+
+    // Profile Dropdown Toggle
+    if (profileBtn && profileDropdown) {
+        profileBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (notifDropdown) notifDropdown.style.display = "none"; // Close notification menu
+            profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
+        });
+    }
+
+    // Outside click par dono dropdowns band karna
+    window.addEventListener("click", () => {
+        if (notifDropdown) notifDropdown.style.display = "none";
+        if (profileDropdown) profileDropdown.style.display = "none";
+    });
+
+    // Profile Dropdown Sign Out Handler
+    const dropdownLogout = document.getElementById("dropdown-logout-btn");
+    if (dropdownLogout) {
+        dropdownLogout.addEventListener("click", () => {
+            if (confirm("Are you sure you want to log out?")) {
+                localStorage.removeItem("currentUserId");
+                localStorage.removeItem("userId");
+                window.location.href = "login.html";
+            }
+        });
+    }
+
+    // ---------------------------------------------------------
+    // E. Fetch Data from MongoDB Backend
+    // ---------------------------------------------------------
+    loadDashboardData(userId);
 });
 
 // ==========================================
@@ -92,14 +183,15 @@ async function loadDashboardData() {
             
             updateDashboard(); 
             renderAllCharts(transactions); 
-            renderRecentTransactions(transactions); // <-- Yeh line yahan add kar dein
+            renderRecentTransactions(transactions);
         }
     } catch (error) {
         console.error("Failed to load dashboard data:", error);
     }
 }
+
 // ==========================================
-// 4. DASHBOARD MATH LOGIC (Synced with Budget)
+// 4. DASHBOARD MATH LOGIC
 // ==========================================
 function updateDashboard() {
     let totalExpense = 0;
@@ -114,28 +206,22 @@ function updateDashboard() {
     // HTML elements update karein
     const cardValues = document.querySelectorAll('.card h2');
     
-    if(cardValues.length >= 3) {
-        cardValues[0].innerText = "₹" + totalExpense.toLocaleString();    // Total Expense
+    if (cardValues.length >= 3) {
+        cardValues[0].innerText = "₹" + totalExpense.toLocaleString();     // Total Expense
         cardValues[1].innerText = "₹" + totalBudget.toLocaleString();    // Total Budget
         cardValues[2].innerText = "₹" + currentBalance.toLocaleString();  // Remaining / Balance
     }
 
-    // Agar alag se Savings card ke liye id di hai toh use yahan update karein:
     const savingsEl = document.getElementById("ui-savings");
     if (savingsEl) {
-        // Savings = Budget - Expense (ya agar koi alag logic hai toh yahan likh sakte hain)
         let savings = totalBudget - totalExpense;
         savingsEl.innerText = "₹" + (savings > 0 ? savings.toLocaleString() : 0);
     }
 }
+
 // ==========================================
 // 5. CHART FILTER & RENDER LOGIC
-let myCategoryChart = null;
-let myTrendChart = null;
-let currentTrendType = 'monthly'; // Default monthly
-let globalTransactionsForCharts = [];
-
-// Data milne par dono charts ko call karne ka function
+// ==========================================
 function renderAllCharts(expenses) {
     globalTransactionsForCharts = expenses;
     renderCategoryDoughnutChart(expenses);
@@ -185,21 +271,25 @@ function renderCategoryDoughnutChart(expenses) {
     });
 }
 
-// 2. Daily / Monthly Trend Filter Button Handler
+// 2. Filter Handler
 function switchTrendFilter(type) {
     currentTrendType = type;
     
-    // Style switch
-    document.getElementById('btn-trend-daily').style.background = type === 'daily' ? '#16a34a' : 'white';
-    document.getElementById('btn-trend-daily').style.color = type === 'daily' ? 'white' : '#16a34a';
+    const btnDaily = document.getElementById('btn-trend-daily');
+    const btnMonthly = document.getElementById('btn-trend-monthly');
 
-    document.getElementById('btn-trend-monthly').style.background = type === 'monthly' ? '#16a34a' : 'white';
-    document.getElementById('btn-trend-monthly').style.color = type === 'monthly' ? 'white' : '#16a34a';
+    if (btnDaily && btnMonthly) {
+        btnDaily.style.background = type === 'daily' ? '#16a34a' : 'white';
+        btnDaily.style.color = type === 'daily' ? 'white' : '#16a34a';
+
+        btnMonthly.style.background = type === 'monthly' ? '#16a34a' : 'white';
+        btnMonthly.style.color = type === 'monthly' ? 'white' : '#16a34a';
+    }
 
     renderTrendBarChart(globalTransactionsForCharts);
 }
 
-// 3. Daily & Monthly Trend Bar Chart Logic
+// 3. Bar Chart Logic
 function renderTrendBarChart(expenses) {
     const ctx = document.getElementById('trendChart');
     if (!ctx) return;
@@ -208,27 +298,24 @@ function renderTrendBarChart(expenses) {
     let dataValues = [];
 
     if (currentTrendType === 'daily') {
-        // Pichle 7 dino ka data group karein ya daily basis par
         const dailyMap = {};
         expenses.forEach(item => {
             const dateStr = item.date ? item.date.split('T')[0] : 'Unknown';
             const amt = Number(item.amount) || 0;
             dailyMap[dateStr] = (dailyMap[dateStr] || 0) + amt;
         });
-        labels = Object.keys(dailyMap).sort().slice(-7); // Aakhiri 7 din
+        labels = Object.keys(dailyMap).sort().slice(-7);
         dataValues = labels.map(date => dailyMap[date]);
     } else {
-        // Monthly trend breakdown
         const monthlyMap = {};
         expenses.forEach(item => {
-            // Agar date format available hai toh month nikal lo, warna general
             let monthName = "Current Month";
-            if(item.date) {
+            if (item.date) {
                 const d = new Date(item.date);
-                if(!isNaN(d)) {
+                if (!isNaN(d)) {
                     monthName = d.toLocaleString('default', { month: 'short', year: '2-digit' });
                 } else {
-                    monthName = item.date; // agar format '25 Jul' jaisa hai
+                    monthName = item.date;
                 }
             }
             const amt = Number(item.amount) || 0;
@@ -250,7 +337,8 @@ function renderTrendBarChart(expenses) {
                 label: `${currentTrendType.toUpperCase()} Expenses (₹)`,
                 data: dataValues.length > 0 ? dataValues : [0],
                 backgroundColor: '#16a34a',
-                borderRadius: 6
+                borderRadius: 6,
+                maxBarThickness: 40
             }]
         },
         options: {
@@ -265,107 +353,164 @@ function renderTrendBarChart(expenses) {
         }
     });
 }
+
 // ==========================================
 // 6. ADD TRANSACTION MODAL (POPUP) LOGIC
 // ==========================================
-const modal = document.getElementById("expense-modal");
-const addBtn = document.getElementById("add-expense-btn");
-const closeBtn = document.querySelector(".close-btn");
-const form = document.getElementById("expense-form");
+// ==========================================
+// ADD TRANSACTION MODAL LOGIC
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("expense-modal");
+    const addBtn = document.getElementById("add-expense-btn");
+    const closeBtn = document.querySelector(".close-btn");
+    const dateInput = document.getElementById("trans-date");
 
-if(addBtn && modal) {
-    addBtn.addEventListener("click", () => {
-        modal.style.display = "flex";
+    // Default Today's Date
+    if (dateInput) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+    }
+
+    // Open Modal
+    if (addBtn && modal) {
+        addBtn.addEventListener("click", () => {
+            modal.style.display = "flex";
+        });
+    }
+
+    // Close Modal
+    if (closeBtn && modal) {
+        closeBtn.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+    }
+
+    // Close modal on outside click
+    window.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
     });
+
+    // Handle Form Submit
+    const expenseForm = document.getElementById("expense-form");
+    if (expenseForm) {
+        expenseForm.addEventListener("submit", handleAddTransaction);
+    }
+});
+
+// Toggle between Expense and Income
+function switchTransType(type) {
+    const typeInput = document.getElementById("trans-type");
+    const btnExpense = document.getElementById("type-expense");
+    const btnIncome = document.getElementById("type-income");
+    const categorySelect = document.getElementById("trans-category");
+
+    typeInput.value = type;
+
+    if (type === 'expense') {
+        btnExpense.classList.add("active");
+        btnIncome.classList.remove("active");
+        
+        // Expense categories
+        categorySelect.innerHTML = `
+            <option value="" disabled selected>Select Category</option>
+            <option value="Food & Dining">🍔 Food & Dining</option>
+            <option value="Shopping">🛍️ Shopping</option>
+            <option value="Transport & Fuel">⛽ Transport & Fuel</option>
+            <option value="Bills & Utilities">⚡ Bills & Utilities</option>
+            <option value="Entertainment">🎬 Entertainment</option>
+            <option value="General">📦 General</option>
+        `;
+    } else {
+        btnIncome.classList.add("active");
+        btnExpense.classList.remove("active");
+
+        // Income categories
+        categorySelect.innerHTML = `
+            <option value="" disabled selected>Select Income Source</option>
+            <option value="Salary">💼 Salary</option>
+            <option value="Freelance">💻 Freelance</option>
+            <option value="Investment">📈 Investment</option>
+            <option value="Business">🏪 Business</option>
+            <option value="Other Income">💰 Other Income</option>
+        `;
+    }
 }
 
-if(closeBtn && modal) {
-    closeBtn.addEventListener("click", () => {
-        modal.style.display = "none";
-    });
-}
+// Submit Transaction to Express/MongoDB Backend
+async function handleAddTransaction(event) {
+    event.preventDefault();
 
-// Submit new form and save to MongoDB
-if(form) {
-    form.addEventListener("submit", async (event) => {
-        event.preventDefault(); 
+    const userId = localStorage.getItem("currentUserId") || localStorage.getItem("userId");
+    if (!userId) {
+        alert("Please login first!");
+        window.location.href = "login.html";
+        return;
+    }
 
-        const amount = Number(document.getElementById("trans-amount").value);
-        const category = document.getElementById("trans-category").value;
-        const title = document.getElementById("trans-title") ? document.getElementById("trans-title").value : "General";
+    const type = document.getElementById("trans-type").value;
+    const amount = Number(document.getElementById("trans-amount").value);
+    const category = document.getElementById("trans-category").value;
+    const paymentMode = document.getElementById("trans-payment").value;
+    const date = document.getElementById("trans-date").value;
+    const description = document.getElementById("trans-desc").value || category;
 
-        const newExpense = {
-            userId: localStorage.getItem("currentUserId"),
-            title: title,
-            category: category,
-            payment: "UPI",
-            amount: amount,
-            date: new Date().toISOString(), // Standard date format for comparison
-            status: "Paid"
-        };
+    const payload = {
+        userId,
+        type,
+        amount,
+        category,
+        paymentMode,
+        date,
+        description
+    };
 
-        try {
-            const response = await fetch('http://localhost:5000/api/add-expense', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newExpense)
-            });
+    try {
+        const response = await fetch("http://localhost:5000/api/expenses/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
 
-            if (response.ok) {
-                transactions.unshift(newExpense);
-                globalTransactions = transactions;
-                updateDashboard();
-                processAndRenderChart(transactions); 
-                modal.style.display = "none";
-                form.reset();
+        if (response.ok) {
+            alert(`${type === 'income' ? 'Income' : 'Expense'} entry saved successfully! 🎉`);
+            document.getElementById("expense-modal").style.display = "none";
+            document.getElementById("expense-form").reset();
+            
+            // Reload dashboard stats & charts
+            if (typeof loadDashboardData === "function") {
+                loadDashboardData(userId);
             } else {
-                alert("Failed to save transaction!");
+                window.location.reload();
             }
-        } catch (error) {
-            console.error("Error saving transaction:", error);
+        } else {
+            const err = await response.json();
+            alert("Error: " + (err.error || "Failed to save transaction"));
         }
-    });
+    } catch (error) {
+        console.error("Save Transaction Error:", error);
+        alert("Server connection failed. Make sure backend is running.");
+    }
 }
-myTrendChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels.length > 0 ? labels : ['No Data'],
-            datasets: [{
-                label: `${currentTrendType.toUpperCase()} Expenses (₹)`,
-                data: dataValues.length > 0 ? dataValues : [0],
-                backgroundColor: '#16a34a',
-                borderRadius: 6,
-                maxBarThickness: 40 // <-- Yeh line pillars ki max width ko limit kar degi taaki wo mote na ho
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
-    });
-    // Recent Transactions ko dynamic render karne ka function
+
+// ==========================================
+// 7. RECENT TRANSACTIONS RENDER
+// ==========================================
 function renderRecentTransactions(expenses) {
     const tbody = document.getElementById("recent-transactions-tbody");
     if (!tbody) return;
 
-    tbody.innerHTML = ""; // Purana dummy data clear kar do
+    tbody.innerHTML = "";
 
     if (!expenses || expenses.length === 0) {
         tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #64748b;">No transactions found</td></tr>`;
         return;
     }
 
-    // Latest transactions ko upar dikhane ke liye slice ya sort kar sakte hain (aakhiri 5 transactions)
-    const recentData = [...expenses].reverse().slice(0, 5);
+    const recentData = [...expenses].slice(0, 5);
 
     recentData.forEach(item => {
-        // Date formatting safely
         let formattedDate = item.date ? item.date.split('T')[0] : "Recent";
         
         const row = document.createElement("tr");

@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendWise | Expense</title>
-    <link rel="stylesheet" href="expense.css">
-    <script src="expenses.js"defer></script>
+    <link rel="icon" type="image/png" href="/src/favicon.png">
+    <link rel="stylesheet" href="/css/expense.css">
+    <script src="/js/expenses.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="global-chat.js" defer></script>
-     <link rel="stylesheet" href="dashboard.css">
+    <script src="/js/global-chat.js" defer></script>
+     <link rel="stylesheet" href="/css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-     <script src="sidebar.js" defer></script>
+     <script src="/js/sidebar.js" defer></script>
 </head> 
 <body>
 <div class="dashboard">  
@@ -19,12 +20,7 @@
     <main class="expenses-page">
 
         <!-- Top Profile & Logout Header Bar -->
-        <div class="user-profile-header" style="display: flex; justify-content: flex-end; align-items: center; gap: 15px; margin-bottom: 25px; background: white; padding: 12px 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-            <span id="user-display-email" style="font-weight: 600; color: #333; font-size: 0.95rem;"></span>
-            <button onclick="logoutUser()" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
-                Logout
-            </button>
-        </div>
+      
 
         <section class="page-header">
             <h1>Expenses</h1>

@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendWise | OCR Scanner</title>
-    <link rel="stylesheet" href="ocr.css">
-    <link rel="stylesheet" href="dashboard.css"> <!-- Sidebar aur layout consistency ke liye -->
+       <link rel="icon" type="image/png" href="/src/favicon.png">
+    <link rel="stylesheet" href="/css/ocr.css">
+    <link rel="stylesheet" href="/css/dashboard.css"> <!-- Sidebar aur layout consistency ke liye -->
     
-    <script src="global-chat.js" defer></script>
-    <script src="sidebar.js" defer></script>
+    <script src="/js/global-chat.js" defer></script>
+    <script src="/js/sidebar.js" defer></script>
+    <script src="/js/ocr.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -24,7 +26,7 @@
         <section class="page-header">
             <div>
                 <h1>Receipt OCR Scanner</h1>
-                <p>Upload or scan your receipt to extract expense details automatically.</p>
+              
             </div>
             <button class="scan-btn">
                 📷 Scan Receipt
@@ -41,7 +43,7 @@
         <h2>Upload or Scan Receipt</h2>
         <div class="drop-zone">
             <i class="fa-solid fa-camera" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
-            <p>Mobile se photo kheechein ya file chunein</p>
+            
             <span>OR Drag & Drop image here</span>
             
             <!-- capture="environment" attribute mobile user ke liye direct rear camera open kar dega -->

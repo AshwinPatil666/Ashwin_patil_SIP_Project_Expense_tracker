@@ -23,10 +23,16 @@ function toggleBudgetFields() {
 }
 
 // Main function jo saari values aur table calculate karega
+// ==========================================
+// MAIN BUDGET PAGE DATA & PROGRESS LOADER
+// ==========================================
 async function loadBudgetPageData(userId) {
     try {
-        const totalBudget = Number(localStorage.getItem("spendwise_monthly_budget")) || 50000;
+        // 1. Total Monthly Budget (Default 10,000 agar set na ho)
+        const savedBudget = localStorage.getItem("spendwise_monthly_budget");
+        const totalBudget = savedBudget ? Number(savedBudget) : 10000;
 
+        // 2. Fetch Expenses from MongoDB
         const response = await fetch(`http://localhost:5000/api/expenses/${userId}`);
         const expenses = await response.json();
 
@@ -38,45 +44,74 @@ async function loadBudgetPageData(userId) {
                 const amt = Number(item.amount) || 0;
                 totalSpent += amt;
 
-                // Category wise spent count karna
                 if (item.category && categorySpent[item.category] !== undefined) {
                     categorySpent[item.category] += amt;
                 }
             });
         }
 
+        // 3. Exact Math Calculations
         const remaining = totalBudget - totalSpent;
-        let percentageUsed = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
-        if (percentageUsed > 100) percentageUsed = 100;
 
-        // UI update (Monthly Cards)
+        // Dynamic Percentages
+        let rawUsedPercent = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+        let usedPercent = Math.round(rawUsedPercent);
+        let leftPercent = Math.max(100 - usedPercent, 0);
+
+        // Daily Limit Calculation (Remaining Days basis)
+        const today = new Date();
+        const totalDaysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+        const remainingDays = Math.max(totalDaysInMonth - today.getDate() + 1, 1);
+        let dailyLimit = remaining > 0 ? Math.round(remaining / remainingDays) : 0;
+
+        // 4. Update Main Text Elements
         const totalBudgetEl = document.getElementById("ui-total-budget");
         const totalSpentEl = document.getElementById("ui-total-spent");
         const remainingEl = document.getElementById("ui-remaining");
-        const percentTextEl = document.getElementById("ui-percent-text");
-        const progressFillEl = document.getElementById("ui-progress-fill");
+        const dailyLimitEl = document.getElementById("ui-daily-limit");
 
         if (totalBudgetEl) totalBudgetEl.innerText = `₹${totalBudget.toLocaleString()}`;
         if (totalSpentEl) totalSpentEl.innerText = `₹${totalSpent.toLocaleString()}`;
+        
         if (remainingEl) {
             remainingEl.innerText = `₹${remaining.toLocaleString()}`;
-            remainingEl.style.color = remaining < 0 ? "#ef4444" : "inherit";
+            remainingEl.style.color = remaining < 0 ? "#ef4444" : "#16a34a";
         }
 
-        if (percentTextEl) percentTextEl.innerText = `${percentageUsed}%`;
-        if (progressFillEl) progressFillEl.style.width = `${percentageUsed}%`;
+        if (dailyLimitEl) dailyLimitEl.innerText = `₹${dailyLimit.toLocaleString()}`;
 
-        // Category Table ko dynamically update karna
-        updateCategoryTable(categorySpent);
+        // 5. Update Card Percentages Text
+        const percentUsedEl = document.getElementById("ui-percent-used");
+        const percentLeftEl = document.getElementById("ui-percent-left");
 
-        // 🔥 AI Budget Tips ko call karna
-        loadAIBudgetTips(totalBudget, totalSpent, categorySpent);
+        if (percentUsedEl) percentUsedEl.innerText = `${usedPercent}% Used`;
+        if (percentLeftEl) percentLeftEl.innerText = `${leftPercent}% Left`;
+
+        // 6. Update Progress Bar Percent Text (Jahan 62% dikh raha tha)
+        const progressTextEl = document.getElementById("ui-progress-percent-text");
+        if (progressTextEl) {
+            progressTextEl.innerText = `${usedPercent}%`;
+        }
+
+        // 7. Update Progress Bar Width (CSS Styles Safe Range: 0% to 100%)
+        const progressFillEl = document.getElementById("ui-progress-fill");
+        if (progressFillEl) {
+            let fillWidth = Math.min(Math.max(rawUsedPercent, 0), 100);
+            progressFillEl.style.width = `${fillWidth}%`;
+            progressFillEl.style.backgroundColor = usedPercent > 100 ? "#ef4444" : "#16a34a";
+        }
+
+        // 8. Refresh Category Table & AI Tips
+        if (typeof updateCategoryTable === "function") updateCategoryTable(categorySpent);
+        if (typeof loadAIBudgetTips === "function") loadAIBudgetTips(totalBudget, totalSpent, categorySpent);
 
     } catch (error) {
         console.error("Error loading budget data:", error);
     }
 }
 
+        // Category Table and AI Tips Refresh
+   
 // Category Table ko render karne ka function (Direct Inputs)
 function updateCategoryTable(categorySpent) {
     const savedCatBudgets = JSON.parse(localStorage.getItem("spendwise_category_budgets")) || {
@@ -143,82 +178,41 @@ function saveAllCategoryBudgets() {
 
 // ==========================================
 async function loadAIBudgetTips(totalBudget, totalSpent, categorySpent) {
-  // Enter your OpenRouter API key here
-    const apiKey = localStorage.getItem("openrouter_api_key"); 
-    
-    if (!apiKey) {
-        const tipsList = document.getElementById("ai-budget-tips-list");
-        if (tipsList) {
-            tipsList.innerHTML = "<li>Please set your OpenRouter API key in browser console first.</li>";
-        }
-        return;
-    }
-    const url = "https://openrouter.ai/api/v1/chat/completions";
-
-    const prompt = `The user's monthly budget is ₹${totalBudget} and they have spent a total of ₹${totalSpent}. The category-wise breakdown is: ${JSON.stringify(categorySpent)}. Based on this data, provide 3 short and effective budget-saving tips in English using bullet points (-).`;
-
     const tipsList = document.getElementById("ai-budget-tips-list");
+    if (!tipsList) return;
+
+    tipsList.innerHTML = "<li>🤖 Generating personalized AI tips...</li>";
 
     try {
-        const response = await fetch(url, {
+        // Direct Apne Backend Ko Call Karo
+        const response = await fetch("http://localhost:5000/api/ai-tips", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey}`,
-                "HTTP-Referer": "http://localhost:3000",
-                "X-Title": "SpendWise AI"
-            },
-            body: JSON.stringify({
-      model: "openrouter/free",
-                messages: [
-                    { role: "user", content: prompt }
-                ]
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ totalBudget, totalSpent, categorySpent })
         });
 
         const data = await response.json();
-        
-        // Debugging ke liye console me response print karna
-        console.log("OpenRouter Response:", data);
 
-        if (data.choices && data.choices[0] && data.choices[0].message) {
-            const aiText = data.choices[0].message.content;
+        if (response.ok && data.tips) {
+            const tipsArray = data.tips.split('\n').filter(t => t.trim() !== '');
+            tipsList.innerHTML = "";
             
-            if (tipsList) {
-                const tipsArray = aiText.split('\n').filter(tip => tip.trim() !== '');
-                tipsList.innerHTML = "";
-                tipsArray.forEach(tip => {
+            tipsArray.forEach(tip => {
+                const cleanTip = tip.replace(/^[-*#\d.]+\s*/, '').trim();
+                if (cleanTip) {
                     const li = document.createElement("li");
-                    li.innerHTML = tip.replace(/[-*#]/g, '').trim();
+                    li.innerText = cleanTip;
                     tipsList.appendChild(li);
-                });
-            }
+                }
+            });
         } else {
-            // Yeh batayega ki error exactly kya hai
-            console.error("Detailed API Error Data:", data);
-            throw new Error(data.error?.message || "Invalid OpenRouter response format");
+            tipsList.innerHTML = "<li>⚠️ Could not fetch AI tips right now.</li>";
         }
-
     } catch (error) {
-        console.error("Failed to load AI tips:", error);
-        if (tipsList) {
-            tipsList.innerHTML = "<li>Failed to load tips.</li>";
-        }
+        console.error("Frontend AI Fetch Error:", error);
+        tipsList.innerHTML = "<li>⚠️ Error connecting to AI server.</li>";
     }
 }
-// Modal open/close controls (Overall Monthly Budget ke liye)
-const setBudgetBtn = document.querySelector(".set-budget-btn");
-if (setBudgetBtn) {
-    setBudgetBtn.addEventListener("click", () => {
-        const modal = document.getElementById("budget-modal");
-        if (modal) {
-            modal.style.display = "flex";
-            const input = document.getElementById("modal-budget-input");
-            if (input) input.value = localStorage.getItem("spendwise_monthly_budget") || 50000;
-        }
-    });
-}
-
 function closeBudgetModal() {
     const modal = document.getElementById("budget-modal");
     if (modal) modal.style.display = "none";

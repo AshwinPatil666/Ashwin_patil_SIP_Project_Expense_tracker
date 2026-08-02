@@ -492,3 +492,52 @@ body {
         min-width: 750px;
     }
 }
+/* Print / PDF Export Styling */
+
+
+/* ==========================================
+   DOCUMENT PRINT / PDF STYLING
+========================================== */
+@media print {
+    /* 1. Sidebar, Header Buttons aur Filters ko PDF se hide karo */
+    .sidebar, 
+    .header-buttons, 
+    .report-filter, 
+    .global-chat-widget, 
+    #chat-widget-container {
+        display: none !important;
+    }
+
+    /* 2. Main Page ko clean white document format me convert karo */
+    body, .dashboard, .reports-page {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    /* 3. Cards aur Charts ko clean document look do */
+    .report-card, .chart-card, .report-table, .insight-card, .recommendation-card {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        page-break-inside: avoid;
+    }
+
+    /* 4. Headings aur Table text ka contrast clear karo */
+    h1, h2, h3, th, td {
+        color: #0f172a !important;
+    }
+
+    table {
+        border-collapse: collapse !important;
+        width: 100% !important;
+    }
+
+    th, td {
+        border: 1px solid #e2e8f0 !important;
+        padding: 8px 12px !important;
+    }
+}

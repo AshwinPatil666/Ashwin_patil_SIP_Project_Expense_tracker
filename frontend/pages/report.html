@@ -4,21 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendWise | Reports</title>
-    <link rel="stylesheet" href="report.css">
-    <link rel="stylesheet" href="dashboard.css"> <!-- Sidebar ki CSS ke liye yeh zaroori hai -->
+       <link rel="icon" type="image/png" href="/src/favicon.png">
+    <link rel="stylesheet" href="/css/report.css">
+    <link rel="stylesheet" href="/css/dashboard.css"> <!-- Sidebar ki CSS ke liye yeh zaroori hai -->
     
-    <script src="global-chat.js" defer></script>
+    <script src="/js/global-chat.js" defer></script>
+    <script src="/js/report.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="sidebar.js" defer></script>
+    <script src="/js/sidebar.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
 </head>
 <body>
 
 <!-- Dashboard wrapper zaroori hai taaki sidebar automatically inject ho sake -->
 <div class="dashboard">
 
-    <main class="reports-page" style="flex: 1; padding: 25px;">
-
+  <main class="reports-page" id="report-print-area" style="flex: 1; padding: 25px;">
         <!--==========================
                     PAGE HEADER
         ===========================-->

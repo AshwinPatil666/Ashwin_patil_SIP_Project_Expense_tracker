@@ -61,63 +61,58 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === "Enter") sendGlobalMessage();
     });
 
-    async function sendGlobalMessage() {
-        const query = chatInput.value.trim();
-        if (!query) return;
+   async function sendGlobalMessage() {
+    const query = chatInput.value.trim();
+    if (!query) return;
 
-        appendMsg(query, "user");
-        chatInput.value = "";
-        chatBox.scrollTop = chatBox.scrollHeight;
+    appendMsg(query, "user");
+    chatInput.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
 
-        const loadingId = appendMsg("Thinking...", "ai");
+    const loadingId = appendMsg("Thinking...", "ai");
 
-        try {
-            const userId = localStorage.getItem("currentUserId");
-            const userEmail = localStorage.getItem("userEmail") || "User";
-            const apiKey = localStorage.getItem("openrouter_api_key");
+    try {
+        const userId = localStorage.getItem("currentUserId");
+        const userEmail = localStorage.getItem("userEmail") || "User";
+        const totalBudget = localStorage.getItem("spendwise_monthly_budget") || 50000;
 
-            if (!apiKey) {
-                updateMsg(loadingId, "Please set your OpenRouter API key in console using localStorage.");
-                return;
-            }
-
-            // Fetch MongoDB Data for Context
-            let txns = [];
-            if (userId) {
+        // Fetch MongoDB Data for Context
+        let txns = [];
+        if (userId) {
+            try {
                 const res = await fetch(`http://localhost:5000/api/expenses/${userId}`);
-                txns = await res.json();
+                if (res.ok) txns = await res.json();
+            } catch (e) {
+                console.warn("Could not fetch user expense context:", e);
             }
-
-            const totalBudget = localStorage.getItem("spendwise_monthly_budget") || 50000;
-
-            // Prompt enriched with user context
-            const prompt = `You are an expert AI financial assistant for a user named ${userEmail}. Their monthly budget is ₹${totalBudget} and their transaction history is: ${JSON.stringify(txns)}. Answer their question concisely and helpfully in English: "${query}"`;
-
-            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${apiKey}`,
-                    "HTTP-Referer": "http://localhost:3000",
-                    "X-Title": "SpendWise AI"
-                },
-                body: JSON.stringify({
-              model: "openrouter/free",
-                    messages: [{ role: "user", content: prompt }]
-                })
-            });
-
-            const data = await response.json();
-            if (data.choices && data.choices[0] && data.choices[0].message) {
-                updateMsg(loadingId, data.choices[0].message.content);
-            } else {
-                updateMsg(loadingId, "Sorry, I couldn't process that right now.");
-            }
-        } catch (err) {
-            console.error("Chat Error:", err);
-            updateMsg(loadingId, "Connection error with AI service.");
         }
+
+        // Send request to Express backend (NO apiKey variable needed here!)
+        const response = await fetch("http://localhost:5000/api/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: query,
+                userEmail: userEmail,
+                totalBudget: totalBudget,
+                transactions: txns
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.reply) {
+            updateMsg(loadingId, data.reply);
+        } else {
+            updateMsg(loadingId, data.error || "Sorry, I couldn't process that right now.");
+        }
+    } catch (err) {
+        console.error("Chat Error:", err);
+        updateMsg(loadingId, "Connection error with SpendWise backend.");
     }
+}
 
     function appendMsg(text, sender) {
         const div = document.createElement("div");

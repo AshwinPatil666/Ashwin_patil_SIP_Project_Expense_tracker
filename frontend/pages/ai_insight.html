@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendWise | AI Insights</title>
-    <link rel="stylesheet" href="ai_insight.css">
-    <link rel="stylesheet" href="dashboard.css"> <!-- Sidebar aur layout consistency ke liye -->
+    <link rel="icon" type="image/png" href="/src/favicon.png">
+    <link rel="stylesheet" href="/css/ai_insight.css">
+    <link rel="stylesheet" href="/css/dashboard.css"> <!-- Sidebar aur layout consistency ke liye -->
     
-    <script src="ai_insight.js" defer></script>
-    <script src="global-chat.js" defer></script>
-    <script src="sidebar.js" defer></script>
+    <!-- JS files: Dhyan rakhein script filename exact match honi chahiye -->
+    <script src="/js/ai_insight.js" defer></script>
+    <script src="/js/global-chat.js" defer></script>
+    <script src="/js/sidebar.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-<!-- Dashboard wrapper zaroori hai taaki sidebar left side me properly inject ho sake -->
+<!-- Dashboard wrapper -->
 <div class="dashboard">
 
     <main class="ai-page" style="flex: 1; padding: 25px;">
 
-        <!--==============================
-                PAGE HEADER
-        ==============================-->
+        <!-- PAGE HEADER -->
         <section class="page-header">
             <div>
                 <h1>AI Financial Insights</h1>
@@ -32,9 +32,7 @@
             </button>
         </section>
 
-        <!--==============================
-                AI VERDICT BANNER (NEW)
-        ==============================-->
+        <!-- AI VERDICT BANNER -->
         <section class="ai-verdict-banner" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 20px 25px; border-radius: 16px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);">
             <h3 style="margin: 0 0 8px 0; font-size: 1.15rem; display: flex; align-items: center; gap: 8px;">🧠 AI Financial Health Verdict</h3>
             <p id="ai-verdict-text" style="margin: 0; font-size: 0.95rem; opacity: 0.95; line-height: 1.5;">
@@ -42,69 +40,58 @@
             </p>
         </section>
 
-        <!--==============================
-                SUMMARY CARDS
-        ==============================-->
+        <!-- SUMMARY CARDS -->
         <section class="insight-summary">
             <div class="insight-card">
                 <h3>Monthly Savings</h3>
-                <h2>₹18,500</h2>
-                <span>↑ 12% Better</span>
+                <h2>₹0</h2>
+                <span>Calculating...</span>
             </div>
             <div class="insight-card">
                 <h3>Highest Spending</h3>
-                <h2>Food</h2>
-                <span>₹9,250</span>
+                <h2>Loading...</h2>
+                <span>₹0</span>
             </div>
             <div class="insight-card">
                 <h3>Budget Health</h3>
-                <h2>Excellent</h2>
-                <span>92 / 100</span>
+                <h2>Checking...</h2>
+                <span>0 / 100</span>
             </div>
             <div class="insight-card">
-                <h3>AI Score</h3>
-                <h2>89%</h2>
+                <h3>Savings Ratio</h3>
+                <h2>0%</h2>
                 <span>Financial Discipline</span>
             </div>
         </section>
 
-        <!--==============================
-                AI RECOMMENDATION
-        ==============================-->
+        <!-- AI RECOMMENDATION -->
         <section class="ai-recommendation">
             <h2>AI Recommendation</h2>
-            <p>
-                Based on your spending history, you spend nearly
-                <strong>35%</strong> of your monthly budget on food.
-                Reducing food expenses by just
-                <strong>10%</strong> can increase your monthly savings significantly.
+            <p id="ai-recommendation-text">
+                Fetching personalized AI advice based on your transactions...
             </p>
         </section>
 
-        <!--==============================
-                AI PREDICTIONS
-        ==============================-->
+        <!-- AI PREDICTIONS -->
         <section class="prediction-section">
             <div class="prediction-card">
                 <h3>Next Month Prediction</h3>
                 <p>Total Expected Expense</p>
-                <h2>₹42,000</h2>
+                <h2 id="pred-expense">₹0</h2>
             </div>
             <div class="prediction-card">
                 <h3>Expected Savings</h3>
                 <p>Estimated</p>
-                <h2>₹8,000</h2>
+                <h2 id="pred-savings">₹0</h2>
             </div>
             <div class="prediction-card">
                 <h3>Risk Level</h3>
                 <p>Overspending Probability</p>
-                <h2>Low</h2>
+                <h2 id="pred-risk">Low</h2>
             </div>
         </section>
 
-        <!--==============================
-                TOP CATEGORIES
-        ==============================-->
+        <!-- TOP CATEGORIES -->
         <section class="top-categories">
             <h2>Top Spending Categories</h2>
             <table>
@@ -118,53 +105,25 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Food</td>
-                        <td>₹9,250</td>
-                        <td>35%</td>
-                        <td>Reduce Restaurant Visits</td>
-                    </tr>
-                    <tr>
-                        <td>Transport</td>
-                        <td>₹5,400</td>
-                        <td>21%</td>
-                        <td>Use Monthly Pass</td>
-                    </tr>
-                    <tr>
-                        <td>Shopping</td>
-                        <td>₹4,800</td>
-                        <td>18%</td>
-                        <td>Limit Impulse Purchases</td>
-                    </tr>
-                    <tr>
-                        <td>Entertainment</td>
-                        <td>₹3,000</td>
-                        <td>11%</td>
-                        <td>Within Safe Limit</td>
+                        <td colspan="4" style="text-align: center;">Fetching your transaction categories...</td>
                     </tr>
                 </tbody>
             </table>
         </section>
 
-        <!--==============================
-                BOTTOM SECTION
-        ==============================-->
+        <!-- BOTTOM SECTION -->
         <section class="ai-bottom">
             <div class="strength-card">
                 <h2>Financial Strengths</h2>
-                <ul>
-                    <li>✔ Monthly savings are improving.</li>
-                    <li>✔ Bills are paid on time.</li>
-                    <li>✔ Budget utilization is balanced.</li>
-                    <li>✔ Low unnecessary expenses.</li>
+                <ul id="strengths-list">
+                    <li>✔ Active expense tracking enabled.</li>
+                    <li>✔ Budget limit configured.</li>
                 </ul>
             </div>
             <div class="improvement-card">
                 <h2>Improvement Areas</h2>
-                <ul>
-                    <li>⚠ Reduce food expenses.</li>
-                    <li>⚠ Increase emergency savings.</li>
-                    <li>⚠ Avoid impulse shopping.</li>
-                    <li>⚠ Track daily expenses regularly.</li>
+                <ul id="improvements-list">
+                    <li>Loading spending analysis...</li>
                 </ul>
             </div>
         </section>
