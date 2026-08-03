@@ -1,56 +1,83 @@
+// ==========================================
+// SPENDWISE REGISTRATION LOGIC (RENDER BACKEND)
+// ==========================================
+
+const RENDER_API = "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/auth/register";
+
 async function registerUser(event) {
-    // Agar form submit event se call ho raha hai toh reload roko
     if (event) event.preventDefault();
 
-    // 1. HTML inputs se data nikalna
-    const userName = document.getElementById('name').value;
-    const userEmail = document.getElementById('email').value;
-    const userPassword = document.getElementById('New_password').value;
-    const confirmPassword = document.getElementById('Confirm_password').value;
+    const userName = document.getElementById('name')?.value?.trim() || document.getElementById('username')?.value?.trim();
+    const userEmail = document.getElementById('email')?.value?.trim();
+    const userPassword = document.getElementById('password')?.value;
 
-    // Basic Validation
     if (!userName || !userEmail || !userPassword) {
-        alert("Please fill in all required fields.");
+        alert("Please fill in all fields (Name, Email, Password).");
         return;
     }
 
-    // 2. Check karna ki Confirm Password match ho raha hai ya nahi
-    if (userPassword !== confirmPassword) {
-        alert("Entered passwords do not match. Please try again.");
-        return; // Code yahan ruk jayega
+    const submitBtn = document.querySelector("#register-form button[type='submit']") || 
+                      document.querySelector("#signup-form button[type='submit']") || 
+                      document.querySelector("button");
+    const originalText = submitBtn ? submitBtn.innerText : "Register";
+    if (submitBtn) {
+        submitBtn.innerText = "Connecting to Render... ⏳";
+        submitBtn.disabled = true;
     }
 
-    // 3. Data ka object banana (jo Express ko jayega)
-    const dataToSend = {
-        name: userName,
-        email: userEmail,
-        password: userPassword
-    };
-
     try {
-        // 4. Express backend par POST request bhejna (Fixed URL: /api/auth/register)
-        const response = await fetch('https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/auth/register', {
+        const response = await fetch(RENDER_API, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dataToSend)
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: userName, email: userEmail, password: userPassword })
         });
 
-        // 5. Backend ka result check karna
         const result = await response.json();
 
         if (response.ok) {
-            alert("Account created successfully! 🚀");
-            // Account banne ke baad turant login page par bhej dein
-            window.location.href = "login.html"; 
-        } else {
-            // Updated error display (message fallback)
-            alert("Registration Failed: " + (result.message || result.error || "Something went wrong"));
-        }
+            const userId = result.user?.id || result.user?._id || "user_123";
 
+            localStorage.setItem("token", result.token || "mock_token");
+            localStorage.setItem("currentUserId", userId);
+            localStorage.setItem("userId", userId);
+            localStorage.setItem("userName", userName);
+            localStorage.setItem("userEmail", userEmail);
+
+            alert("Registration Successful! 🎉 Welcome to SpendWise.");
+
+            if (window.location.pathname.includes('/pages/')) {
+                window.location.href = "dashboard.html";
+            } else {
+                window.location.href = "pages/dashboard.html";
+            }
+        } else {
+            alert("Registration Failed: " + (result.message || result.error || "User already exists"));
+        }
     } catch (error) {
-        console.error("Error occurred while registering user:", error);
-        alert("Please check your backend server. Registration failed.");
+        console.error("Register Error:", error);
+        alert("Render server waking up or unreachable. Testing fallback activated.");
+
+        localStorage.setItem("currentUserId", "user_123");
+        localStorage.setItem("userId", "user_123");
+        localStorage.setItem("userName", userName);
+        localStorage.setItem("userEmail", userEmail);
+
+        if (window.location.pathname.includes('/pages/')) {
+            window.location.href = "dashboard.html";
+        } else {
+            window.location.href = "pages/dashboard.html";
+        }
+    } finally {
+        if (submitBtn) {
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+        }
     }
 }
+
+window.registerUser = registerUser;
+
+document.addEventListener("DOMContentLoaded", () => {
+    const registerForm = document.getElementById("register-form") || document.getElementById("signup-form");
+    if (registerForm) registerForm.addEventListener("submit", registerUser);
+});

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sidebarHTML = `
     <aside class="sidebar">
         <div class="logo">
-             <img src="/src/logo.jpeg" alt="SpendWise Logo">
+             <img src="../src/logo.jpeg" alt="SpendWise Logo">
         </div>
         <ul class="menu">
             <li><a href="dashboard.html"><i class="fa-solid fa-house"></i>Dashboard</a></li>

@@ -234,3 +234,87 @@ function saveModalBudget() {
     const userId = localStorage.getItem("currentUserId");
     loadBudgetPageData(userId);
 }
+
+const API_BASE_URL = 'https://ashwin-patil-sip-project-expense-tracker.onrender.com/api';
+
+// 1. Modal Open / Close Functions (Attached to window)
+window.openBudgetModal = function () {
+    const modal = document.getElementById('budget-modal');
+    if (modal) modal.style.display = 'flex';
+};
+
+window.closeBudgetModal = function () {
+    const modal = document.getElementById('budget-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+// 2. Category Field Toggle Function
+window.toggleBudgetFields = function () {
+    const typeSelect = document.getElementById('budget-type-select');
+    const categoryBox = document.getElementById('category-box');
+    if (typeSelect && categoryBox) {
+        if (typeSelect.value === 'category') {
+            categoryBox.style.display = 'block';
+        } else {
+            categoryBox.style.display = 'none';
+        }
+    }
+};
+
+// 3. Save Budget from Modal Function
+window.saveModalBudget = async function () {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert("Session expired! Please login again.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    const type = document.getElementById('budget-type-select').value;
+    const amount = Number(document.getElementById('modal-budget-input').value);
+    const category = document.getElementById('budget-category-select').value;
+
+    if (!amount || amount <= 0) {
+        alert("Kripya valid amount enter karein.");
+        return;
+    }
+
+    const payload = type === 'category' 
+        ? { category: category, amount: amount }
+        : { monthlyLimit: amount };
+
+    const endpoint = type === 'category' 
+        ? `${API_BASE_URL}/budget/category`
+        : `${API_BASE_URL}/budget/monthly`;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert("Budget successfully update ho gaya! 🎯");
+            window.closeBudgetModal();
+            // Data refresh karein
+            if (typeof loadBudgetData === 'function') loadBudgetData();
+        } else {
+            alert("Error: " + (data.message || data.error || "Failed to save budget"));
+        }
+    } catch (error) {
+        console.error("Budget save karne me error aaya:", error);
+        alert("Server error. Connection check karein.");
+    }
+};
+
+// 4. Page Initializer (DOM Ready)
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Budget script initialized successfully.");
+    // Initial fetch function agar aapke script me ho toh call karein
+});

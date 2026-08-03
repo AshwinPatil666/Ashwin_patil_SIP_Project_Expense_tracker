@@ -1,4 +1,17 @@
-// ==========================================
+// dashboard.js ke start me
+document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token');
+    
+    // Agar token nahi mila toh local par login.html par bhej do
+    if (!token) {
+        alert("Please login first!");
+        window.location.href = "login.html";
+        return;
+    }
+    
+    // Yahan aapke dashboard items/expenses load honge
+    loadDashboardData(); 
+});// ==========================================
 // 1. GLOBAL VARIABLES & INITIALIZATION
 // ==========================================
 let transactions = [];
