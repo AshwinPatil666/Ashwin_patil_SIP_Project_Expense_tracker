@@ -45,11 +45,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // HTML Fallback Routes
 app.get('/', (req, res) => {
-    res.sendFile(path.join(rootDir, 'registor.html'));
+    res.sendFile(path.join(rootPath, 'registor.html'));
 });
 
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(rootDir, 'pages', 'login.html'));
+    res.sendFile(path.join(rootPath, 'pages', 'login.html'));
 });
 // ==========================================
 // MONGODB CONNECTION
