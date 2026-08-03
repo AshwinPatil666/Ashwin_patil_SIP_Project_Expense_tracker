@@ -17,8 +17,18 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Static folder for uploaded receipts access
+// ==========================================
+// STATIC FILES SERVING (404 FIX HERE 🚀)
+// ==========================================
+// 1. Uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// 2. Front-end Folders (Root directory + JS/CSS/Pages folders)
+// Ye lines aapke /js/registor.js 404 error ko hamesha ke liye fix kar dengi!
+app.use(express.static(path.join(__dirname, '../'))); // Serving root files
+app.use('/js', express.static(path.join(__dirname, '../js'))); // Direct /js folder serve
+app.use('/css', express.static(path.join(__dirname, '../css'))); // Direct /css folder serve
+app.use('/pages', express.static(path.join(__dirname, '../pages'))); // Direct /pages folder serve
 
 // ==========================================
 // MONGODB CONNECTION
@@ -38,10 +48,7 @@ app.use('/api/auth', authRoutes);         // Handles /api/auth/register, /api/au
 app.use('/api/expenses', expenseRoutes);   // Handles /api/expenses/ add, get, delete, OCR
 
 // ==========================================
-// AI TIPS ROUTE (404 FIX HERE 🚀)
-// ==========================================
-// ==========================================
-// AI TIPS ROUTE (500 Error Fix)
+// AI TIPS ROUTE
 // ==========================================
 app.post('/api/ai-tips', async (req, res) => {
     try {
@@ -64,7 +71,7 @@ app.post('/api/ai-tips', async (req, res) => {
                 "X-Title": "SpendWise AI"
             },
             body: JSON.stringify({
-                model: "openrouter/free", // 👈 FREE & WORKING MODEL
+                model: "openrouter/free",
                 messages: [{ role: "user", content: prompt }]
             })
         });
@@ -88,9 +95,6 @@ app.post('/api/ai-tips', async (req, res) => {
     }
 });
 
-// ==========================================
-// AI CHATBOT ROUTE (Gemini 2.0 Free)
-// ==========================================
 // ==========================================
 // AI CHATBOT ROUTE
 // ==========================================
@@ -134,8 +138,9 @@ app.post('/api/chat', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 // ==========================================
-// ERROR HANDLER (Hamesha saare routes ke baad)
+// ERROR HANDLER
 // ==========================================
 app.use(errorHandler);
 
