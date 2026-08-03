@@ -40,7 +40,7 @@ async function loginUser() {
             }
 
             alert("Login Successful! 🚀");
-            // Pages subfolder ke andar redirection
+            // Seedha dashboard par redirect karein
             window.location.href = "dashboard.html"; 
         } else {
             // Error Message Show Karein
@@ -49,11 +49,11 @@ async function loginUser() {
 
     } catch (error) {
         console.error("Error occurred while logging in:", error);
-        alert("Server error. Please check your internet or backend status.");
+        alert("Server error. Please check your connection or backend status.");
     }
 }
 
-// Event Listener ko attach karein taaki form submit par login trigger ho
+// Event Listener: Form submit hone par loginUser auto-run hoga
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
