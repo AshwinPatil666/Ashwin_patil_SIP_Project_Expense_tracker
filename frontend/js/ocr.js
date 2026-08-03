@@ -256,7 +256,7 @@ async function saveOcrExpense() {
     };
 
     try {
-        const response = await fetch('http://localhost:5000/api/expenses/add', {
+        const response = await fetch('https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(expensePayload)

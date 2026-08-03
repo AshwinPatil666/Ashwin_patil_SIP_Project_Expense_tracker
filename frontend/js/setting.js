@@ -63,14 +63,14 @@ async function updateProfile() {
         localStorage.setItem("userName", newName);
         
         // Optional: Agar aap backend par bhi update bhejna chahte hain toh yahan API call laga sakte hain
-        /*
-        const response = await fetch(`http://localhost:5000/api/users/update/${userId}`, {
+        
+        const response = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/users/update/${userId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: newName })
         });
         if (!response.ok) throw new Error("Failed to update profile on server");
-        */
+        
 
         alert("Profile updated successfully!");
     } catch (error) {
@@ -102,7 +102,7 @@ async function updatePassword() {
 
     try {
         // Backend API call to update password in MongoDB
-        const response = await fetch('http://localhost:5000/api/users/update-password', {
+        const response = await fetch('https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/users/update-password', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, currentPassword, newPassword })

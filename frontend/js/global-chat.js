@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let txns = [];
         if (userId) {
             try {
-                const res = await fetch(`http://localhost:5000/api/expenses/${userId}`);
+                const res = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`);
                 if (res.ok) txns = await res.json();
             } catch (e) {
                 console.warn("Could not fetch user expense context:", e);
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Send request to Express backend (NO apiKey variable needed here!)
-        const response = await fetch("http://localhost:5000/api/chat", {
+        const response = await fetch("https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/chat", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

@@ -33,7 +33,7 @@ async function loadBudgetPageData(userId) {
         const totalBudget = savedBudget ? Number(savedBudget) : 10000;
 
         // 2. Fetch Expenses from MongoDB
-        const response = await fetch(`http://localhost:5000/api/expenses/${userId}`);
+        const response = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`);
         const expenses = await response.json();
 
         let totalSpent = 0;
@@ -185,7 +185,7 @@ async function loadAIBudgetTips(totalBudget, totalSpent, categorySpent) {
 
     try {
         // Direct Apne Backend Ko Call Karo
-        const response = await fetch("http://localhost:5000/api/ai-tips", {
+        const response = await fetch("https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/ai-tips", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ totalBudget, totalSpent, categorySpent })

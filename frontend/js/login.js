@@ -15,15 +15,15 @@ async function loginUser() {
         password: userPassword
     };
 
-    try {
-        // 3. Backend ki LOGIN API par data bhejna (Correct URL: /api/auth/login)
-        const response = await fetch('http://localhost:5000/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dataToSend)
-        });
+  try {
+    // 3. Backend ki LOGIN API par data bhejna (Live URL)
+    const response = await fetch('https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/auth/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataToSend)
+    });
 
         // 4. Backend se aaya jawab padhna
         const result = await response.json();

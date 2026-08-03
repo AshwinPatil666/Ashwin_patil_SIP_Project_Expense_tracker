@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadAndAnalyzeInsights(userId) {
     try {
         // 1. Fetch real user transactions from MongoDB backend
-        const response = await fetch(`http://localhost:5000/api/expenses/${userId}`);
+        const response = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`);
         const transactions = await response.json();
 
         if (!response.ok || !Array.isArray(transactions)) {
@@ -89,7 +89,7 @@ async function fetchAIInsightsFromBackend(categoryMap, totalExpense, budget) {
     if (recommendationEl) recommendationEl.innerText = "Generating AI recommendations based on your actual spending...";
 
     try {
-        const response = await fetch("http://localhost:5000/api/chat", {
+        const response = await fetch("https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

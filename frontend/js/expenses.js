@@ -41,7 +41,7 @@ async function loadUserExpenses() {
     if (!userId) return;
 
     try {
-        const response = await fetch(`http://localhost:5000/api/expenses/${userId}`);
+            const response = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`);
         const data = await response.json();
 
         if (response.ok && Array.isArray(data)) {
@@ -199,7 +199,7 @@ if(form) {
         };
 
         try {
-            const response = await fetch('http://localhost:5000/api/add-expense', {
+            const response = await fetch('https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newExpense)

@@ -29,7 +29,7 @@ async function registerUser(event) {
 
     try {
         // 4. Express backend par POST request bhejna (Fixed URL: /api/auth/register)
-        const response = await fetch('http://localhost:5000/api/auth/register', {
+        const response = await fetch('https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

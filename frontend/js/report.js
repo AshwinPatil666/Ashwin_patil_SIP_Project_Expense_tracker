@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ==========================================
 async function fetchAndRenderReports(userId) {
     try {
-        const response = await fetch(`http://localhost:5000/api/expenses/${userId}`);
+        const response = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`);
         const data = await response.json();
 
         if (!response.ok || !Array.isArray(data)) {
