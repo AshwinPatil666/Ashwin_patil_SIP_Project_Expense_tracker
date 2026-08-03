@@ -34,17 +34,22 @@ const rootDir = path.resolve(__dirname, '..'); // Agar server.js backend subfold
 // const rootDir = __dirname;                 // Agar server.js main root folder me hi hai
 
 // 1. Uploads
+// Root folder path
+
+// Serve All Static Asset Folders Directly
+app.use(express.static(rootDir));
+app.use('/js', express.static(path.join(rootDir, 'js')));
+app.use('/css', express.static(path.join(rootDir, 'css')));
+app.use('/pages', express.static(path.join(rootDir, 'pages')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 2. Static Folders (Absolute Resolution)
-app.use(express.static(path.join(__dirname, '../'))); 
-app.use('/js', express.static(path.join(__dirname, '../js')));
-app.use('/css', express.static(path.join(__dirname, '../css')));
-app.use('/pages', express.static(path.join(__dirname, '../pages')));
-
-// 3. Root Route (Direct Landing Page)
+// HTML Fallback Routes
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../registor.html'));
+    res.sendFile(path.join(rootDir, 'registor.html'));
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(rootDir, 'pages', 'login.html'));
 });
 // ==========================================
 // MONGODB CONNECTION
