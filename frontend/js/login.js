@@ -1,4 +1,5 @@
 async function loginUser() {
+    alert("Login successful!");
     // 1. Input tag se email aur password nikalna
     const userEmail = document.getElementById('email').value;
     const userPassword = document.getElementById('password').value;
