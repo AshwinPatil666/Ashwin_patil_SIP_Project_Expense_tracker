@@ -26,17 +26,25 @@ app.use(cors());
 const rootPath = path.join(__dirname, '../'); // Root directory path
 
 // 1. Uploads Folder
+// ==========================================
+// STATIC FILES SERVING (DIRECT ROOT PATH FIX)
+// ==========================================
+// Check karein ki server.js root me hai ya backend folder me
+const rootDir = path.resolve(__dirname, '..'); // Agar server.js backend subfolder me hai
+// const rootDir = __dirname;                 // Agar server.js main root folder me hi hai
+
+// 1. Uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 2. Serve Static Directories
-app.use(express.static(rootPath));
-app.use('/js', express.static(path.join(rootPath, 'js')));
-app.use('/css', express.static(path.join(rootPath, 'css')));
-app.use('/pages', express.static(path.join(rootPath, 'pages')));
+// 2. Static Folders (Absolute Resolution)
+app.use(express.static(path.join(__dirname, '../'))); 
+app.use('/js', express.static(path.join(__dirname, '../js')));
+app.use('/css', express.static(path.join(__dirname, '../css')));
+app.use('/pages', express.static(path.join(__dirname, '../pages')));
 
-// 3. Root Route Fallback (Landing / Login Page)
+// 3. Root Route (Direct Landing Page)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(rootPath, 'registor.html')); 
+    res.sendFile(path.join(__dirname, '../registor.html'));
 });
 // ==========================================
 // MONGODB CONNECTION
