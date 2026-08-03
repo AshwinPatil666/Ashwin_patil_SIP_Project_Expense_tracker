@@ -15,15 +15,15 @@ async function loginUser() {
         password: userPassword
     };
 
-  try {
-    // 3. Backend ki LOGIN API par data bhejna (Live URL)
-    const response = await fetch('https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/auth/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dataToSend)
-    });
+    try {
+        // 3. Backend ki LOGIN API par data bhejna (Live URL)
+        const response = await fetch('https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend)
+        });
 
         // 4. Backend se aaya jawab padhna
         const result = await response.json();
@@ -35,12 +35,12 @@ async function loginUser() {
                 localStorage.setItem("token", result.token);
             }
             if (result.user) {
-                localStorage.setItem("currentUserId", result.user.id);
+                localStorage.setItem("currentUserId", result.user.id || result.user._id);
                 localStorage.setItem("userEmail", result.user.email);
             }
 
             alert("Login Successful! 🚀");
-            // Seedha dashboard par redirect karein
+            // Pages subfolder ke andar redirection
             window.location.href = "dashboard.html"; 
         } else {
             // Error Message Show Karein
@@ -49,6 +49,17 @@ async function loginUser() {
 
     } catch (error) {
         console.error("Error occurred while logging in:", error);
-        alert("Server error. Make sure Backend is running on Port 5000.");
+        alert("Server error. Please check your internet or backend status.");
     }
 }
+
+// Event Listener ko attach karein taaki form submit par login trigger ho
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            loginUser();
+        });
+    }
+});
