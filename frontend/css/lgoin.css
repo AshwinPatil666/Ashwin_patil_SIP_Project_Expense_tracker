@@ -52,6 +52,7 @@ label{
 input{
     padding: 12px;
     border: 1px solid #ccc;
+    width: 100%;
     border-radius: 8px;
     outline: none;
 }
