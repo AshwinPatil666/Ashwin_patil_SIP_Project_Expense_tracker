@@ -7,26 +7,25 @@ const RENDER_API = "https://ashwin-patil-sip-project-expense-tracker.onrender.co
 async function registerUser(event) {
     if (event) event.preventDefault();
 
-    // 1. Get input values matching your HTML IDs
-    const userName = document.getElementById('name')?.value?.trim();
+    const userName = document.getElementById('name')?.value?.trim() || document.getElementById('username')?.value?.trim();
     const userEmail = document.getElementById('email')?.value?.trim();
     const userPassword = document.getElementById('New_password')?.value;
     const confirmPassword = document.getElementById('Confirm_password')?.value;
 
-    // 2. Validation Checks
+    if (userPassword !== confirmPassword) {
+        alert("Passwords do not match. Please try again.");
+        return;
+    }
+
     if (!userName || !userEmail || !userPassword) {
         alert("Please fill in all fields (Name, Email, Password).");
         return;
     }
 
-    if (userPassword !== confirmPassword) {
-        alert("Passwords do not match! Please check and try again.");
-        return;
-    }
-
-    // 3. UI Button Loading Feedback
-    const submitBtn = document.querySelector("button[type='submit']");
-    const originalText = submitBtn ? submitBtn.innerText : "Create Account";
+    const submitBtn = document.querySelector("#register-form button[type='submit']") || 
+                      document.querySelector("#signup-form button[type='submit']") || 
+                      document.querySelector("button");
+    const originalText = submitBtn ? submitBtn.innerText : "Register";
     if (submitBtn) {
         submitBtn.innerText = "Connecting to Render... ⏳";
         submitBtn.disabled = true;
@@ -83,3 +82,8 @@ async function registerUser(event) {
 }
 
 window.registerUser = registerUser;
+
+document.addEventListener("DOMContentLoaded", () => {
+    const registerForm = document.getElementById("register-form") || document.getElementById("signup-form");
+    if (registerForm) registerForm.addEventListener("submit", registerUser);
+});
