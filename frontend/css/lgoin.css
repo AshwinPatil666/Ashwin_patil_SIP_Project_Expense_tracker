@@ -1,85 +1,74 @@
-* {
+
+*{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-body {
+body{
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #0f172a, #14532d, #15803d);
+    background: linear-gradient(170deg, white, #ffffff, #07e95a);
 }
 
-.login_page {
-    width: 380px;
-    background-color: #ffffff;
-    border: 1px solid rgba(7, 233, 90, 0.4);
+.login_page{
+    width: 350px;
+    background-color: white;
+    border: 1px solid #07e95a;
     border-radius: 20px;
     padding: 30px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 20px 40px rgba(113, 221, 18, 0.25);
 }
 
-.logo {
+.logo{
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
 }
 
-.logo img {
-    width: 160px;
-    height: auto;
-    object-fit: contain;
+.logo img{
+    width: 150px;
 }
 
-.login_page h2 {
+.login_page h2{
     text-align: center;
     margin-bottom: 25px;
-    color: #0f172a;
 }
 
-form {
+form{
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 15px;
 }
 
-label {
+label{
     font-weight: bold;
-    color: #334155;
-    font-size: 14px;
 }
 
-input {
+input{
     padding: 12px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid #ccc;
     border-radius: 8px;
     outline: none;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
 }
 
-input:focus {
-    border-color: #15803d;
-    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
+input:focus{
+    border-color: #07e95a;
 }
 
-.forgot-password {
+.forgot-password{
     text-decoration: none;
-    color: #15803d;
+    color: green;
     font-size: 14px;
     text-align: right;
-    transition: color 0.2s;
-}
-
-.forgot-password:hover {
-    color: #166534;
-    text-decoration: underline;
 }
 
 button {
+    width: 100%; /* Pure form ki width cover karega */
     padding: 12px;
     border: none;
     border-radius: 8px;
@@ -89,26 +78,130 @@ button {
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 5px;
+    margin-top: 10px;
+}
+button:hover{
+    background-color: #05c94d;
 }
 
-button:hover {
-    background-color: #166534;
-}
-
-.signup-text {
+.signup-text{
     text-align: center;
     margin-top: 20px;
-    color: #64748b;
-    font-size: 14px;
 }
 
-.signup-text a {
-    color: #15803d;
+.signup-text a{
+    color: green;
     text-decoration: none;
     font-weight: bold;
 }
 
-.signup-text a:hover {
-    text-decoration: underline;
+
+.logo img{
+
+    width:180px;
 }
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+
+body{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+/*    background: linear-gradient(170deg, white, #ffffff, #07e95a);
+}body{
+*/
+    background:linear-gradient(135deg,#0f172a,#14532d,#15803d);
+
+    min-height:100vh;
+
+
+}
+
+
+
+.login_page{
+    width: 350px;
+    background-color: white;
+    border: 1px solid #07e95a;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(113, 221, 18, 0.25);
+}
+
+.logo{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.logo img{
+    width: 150px;
+}
+
+.login_page h2{
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+label{
+    font-weight: bold;
+}
+
+input{
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+}
+
+input:focus{
+    border-color: #07e95a;
+}
+
+.forgot-password{
+    text-decoration: none;
+    color: green;
+    font-size: 14px;
+    text-align: right;
+}
+
+button{
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #085825;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover{
+    background-color: #05c94d;
+}
+
+.signup-text{
+    text-align: center;
+    margin-top: 20px;
+}
+
+.signup-text a{
+    color: green;
+    text-decoration: none;
+    font-weight: bold;
+}
+
