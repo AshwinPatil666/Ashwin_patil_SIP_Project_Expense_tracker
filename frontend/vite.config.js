@@ -10,7 +10,7 @@ export default defineConfig({
         login: resolve(__dirname, 'pages/login.html'),
         dashboard: resolve(__dirname, 'pages/dashboard.html'),
         // Check karein ki register.html sahi path par hai:
-        register: resolve(__dirname, 'pages/register.html'),
+        register: resolve(__dirname, 'pages/registor.html'),
       },
     },
   },
