@@ -20,16 +20,24 @@ app.use(cors());
 // ==========================================
 // STATIC FILES SERVING (404 FIX HERE 🚀)
 // ==========================================
-// 1. Uploads folder
+// ==========================================
+// STATIC FILES & FRONTEND SERVING (PERMANENT FIX 🚀)
+// ==========================================
+const rootPath = path.join(__dirname, '../'); // Root directory path
+
+// 1. Uploads Folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 2. Front-end Folders (Root directory + JS/CSS/Pages folders)
-// Ye lines aapke /js/registor.js 404 error ko hamesha ke liye fix kar dengi!
-app.use(express.static(path.join(__dirname, '../'))); // Serving root files
-app.use('/js', express.static(path.join(__dirname, '../js'))); // Direct /js folder serve
-app.use('/css', express.static(path.join(__dirname, '../css'))); // Direct /css folder serve
-app.use('/pages', express.static(path.join(__dirname, '../pages'))); // Direct /pages folder serve
+// 2. Serve Static Directories
+app.use(express.static(rootPath));
+app.use('/js', express.static(path.join(rootPath, 'js')));
+app.use('/css', express.static(path.join(rootPath, 'css')));
+app.use('/pages', express.static(path.join(rootPath, 'pages')));
 
+// 3. Root Route Fallback (Landing / Login Page)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(rootPath, 'registor.html')); 
+});
 // ==========================================
 // MONGODB CONNECTION
 // ==========================================
