@@ -6,7 +6,11 @@ const bcrypt = require('bcryptjs');
 // Perfect relative path as per your folder structure
 const User = require('../model/user');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secret123';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    throw new Error("JWT_SECRET is not configured");
+}
 
 // -------------------------------------------------------------
 // 1. REGISTER USER (POST /api/auth/register)

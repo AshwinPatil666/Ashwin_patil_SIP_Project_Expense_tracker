@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Budget = require('../model/budget');
-const authMiddleware = require('../middleware/auth'); // Aapka JWT Auth Middleware
+const authMiddleware = require('../middleware/authMiddleware'); // Aapka JWT Auth Middleware
 
 // ==========================================
 // 1. GET USER BUDGET (Fetch Monthly & Category Budgets)

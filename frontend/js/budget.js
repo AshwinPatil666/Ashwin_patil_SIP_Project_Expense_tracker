@@ -237,58 +237,107 @@ window.toggleBudgetFields = function () {
 };
 
 window.saveModalBudget = async function () {
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('currentUserId');
-    
-    const typeSelect = document.getElementById('budget-type-select');
-    const amountInput = document.getElementById('modal-budget-input');
-    const categorySelect = document.getElementById('budget-category-select');
 
-    const type = typeSelect ? typeSelect.value : 'monthly';
-    const amount = Number(amountInput ? amountInput.value : 0);
-    const category = categorySelect ? categorySelect.value : 'Food';
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("currentUserId");
+
+    const type = document.getElementById("budget-type-select")?.value || "monthly";
+    const amount = Number(
+        document.getElementById("modal-budget-input")?.value || 0
+    );
+    const category =
+        document.getElementById("budget-category-select")?.value || "Food";
 
     if (!amount || amount <= 0) {
         alert("Please enter a valid amount.");
         return;
     }
 
-    // Always update local storage for smooth fallback UI
-    if (type === 'monthly') {
-        localStorage.setItem("spendwise_monthly_budget", amount);
+    if (!token) {
+        alert("Session expired. Please login again.");
+        window.location.href = "login.html";
+        return;
     }
 
-    // Sync with backend API if Token exists
-    if (token) {
-        const payload = type === 'category' 
-            ? { category: category, amount: amount }
-            : { monthlyLimit: amount };
+    const payload =
+        type === "category"
+            ? {
+                category: category,
+                amount: amount
+            }
+            : {
+                monthlyLimit: amount
+            };
 
-        const endpoint = type === 'category' 
+    const endpoint =
+        type === "category"
             ? `${API_BASE_URL}/budget/category`
             : `${API_BASE_URL}/budget/monthly`;
 
-        try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(payload)
-            });
+    console.log("Budget Request:", {
+        endpoint,
+        payload,
+        tokenExists: !!token
+    });
 
-            const data = await response.json();
+    try {
 
-            if (!response.ok) {
-                console.warn("Backend Sync Error:", data.message || data.error);
-            }
-        } catch (error) {
-            console.error("Server update failed, saved locally:", error);
+        const response = await fetch(endpoint, {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        console.log("Budget API Response:", response.status, data);
+
+        if (!response.ok) {
+
+            // JWT invalid
+            if (response.status === 401 || response.status === 403) {
+    localStorage.clear();
+
+    alert("Session expired. Please login again.");
+    window.location.href = "login.html";
+    return;
+}
+
+            alert(
+                "Budget save failed: " +
+                (data.message || data.error || "Server error")
+            );
+
+            return;
         }
-    }
 
-    alert("Budget successfully update ho gaya! 🎯");
-    window.closeBudgetModal();
-    loadBudgetPageData(userId);
+        // Backend successfully saved
+        if (type === "monthly") {
+            localStorage.setItem(
+                "spendwise_monthly_budget",
+                amount
+            );
+        }
+
+        alert("Budget successfully updated! 🎯");
+
+        window.closeBudgetModal();
+
+        if (typeof loadBudgetPageData === "function") {
+            loadBudgetPageData(userId);
+        }
+
+    } catch (error) {
+
+        console.error("Budget API Error:", error);
+
+        alert(
+            "Unable to connect to backend. Budget was not saved."
+        );
+    }
 };

@@ -1,22 +1,26 @@
 // ==========================================
-// SPENDWISE LOGIN LOGIC (RENDER BACKEND)
+// SPENDWISE LOGIN LOGIC
 // ==========================================
 
-const RENDER_API = "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/auth/login";
+const RENDER_API =
+    "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/auth/login";
 
 async function loginUser(event) {
     if (event) event.preventDefault();
 
-    const userEmail = document.getElementById('email')?.value?.trim();
-    const userPassword = document.getElementById('password')?.value;
+    const userEmail = document.getElementById("email")?.value.trim();
+    const userPassword = document.getElementById("password")?.value;
 
     if (!userEmail || !userPassword) {
         alert("Please enter both email and password.");
         return;
     }
 
-    const submitBtn = document.querySelector("#login-Form button[type='submit']") || document.querySelector("button");
-    const originalText = submitBtn ? submitBtn.innerText : "Login";
+    const submitBtn =
+        document.querySelector("#login-Form button[type='submit']");
+
+    const originalText = submitBtn?.innerText || "Sign In";
+
     if (submitBtn) {
         submitBtn.innerText = "Connecting to Render... ⏳";
         submitBtn.disabled = true;
@@ -24,48 +28,88 @@ async function loginUser(event) {
 
     try {
         const response = await fetch(RENDER_API, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: userEmail, password: userPassword })
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: userEmail,
+                password: userPassword
+            })
         });
 
         const result = await response.json();
 
-        if (response.ok) {
-            const userId = result.user?.id || result.user?._id || "user_123";
-            const userName = result.user?.name || userEmail.split('@')[0];
+        console.log("Login response:", result);
 
-            localStorage.setItem("token", result.token || "mock_token");
+        if (!response.ok) {
+            alert(
+                "Login Failed: " +
+                (result.message || result.error || "Invalid Credentials")
+            );
+            return;
+        }
+
+        // ==============================
+        // JWT MUST EXIST
+        // ==============================
+
+        if (!result.token) {
+            console.error("JWT missing:", result);
+
+            alert(
+                "Login failed: Backend did not return authentication token."
+            );
+
+            return;
+        }
+
+        const userId =
+            result.user?.id ||
+            result.user?._id;
+
+        const userName =
+            result.user?.name ||
+            userEmail.split("@")[0];
+
+        // ==============================
+        // SAVE AUTH DATA
+        // ==============================
+
+        localStorage.setItem("token", result.token);
+
+        if (userId) {
             localStorage.setItem("currentUserId", userId);
             localStorage.setItem("userId", userId);
-            localStorage.setItem("userName", userName);
-            localStorage.setItem("userEmail", userEmail);
-
-            alert("Login Successful! 🚀 Redirecting...");
-
-            if (window.location.pathname.includes('/pages/')) {
-                window.location.href = "dashboard.html";
-            } else {
-                window.location.href = "pages/dashboard.html";
-            }
-        } else {
-            alert("Login Failed: " + (result.message || result.error || "Invalid Credentials"));
         }
-    } catch (error) {
-        console.error("Login Error:", error);
-        alert("Render server waking up or unreachable. Testing fallback activated.");
 
-        localStorage.setItem("currentUserId", "user_123");
-        localStorage.setItem("userId", "user_123");
-        localStorage.setItem("userName", "Ashwin Patil");
-        localStorage.setItem("userEmail", userEmail || "ashwin@example.com");
+        localStorage.setItem("userName", userName);
+        localStorage.setItem("userEmail", userEmail);
 
-        if (window.location.pathname.includes('/pages/')) {
+        console.log("JWT saved successfully");
+
+        alert("Login Successful! 🚀");
+
+        // ==============================
+        // REDIRECT
+        // ==============================
+
+        if (window.location.pathname.includes("/pages/")) {
             window.location.href = "dashboard.html";
         } else {
             window.location.href = "pages/dashboard.html";
         }
+
+    } catch (error) {
+
+        console.error("Login Error:", error);
+
+        alert(
+            "Unable to connect to server. Please try again."
+        );
+
     } finally {
+
         if (submitBtn) {
             submitBtn.innerText = originalText;
             submitBtn.disabled = false;
@@ -76,6 +120,12 @@ async function loginUser(event) {
 window.loginUser = loginUser;
 
 document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.getElementById("login-Form");
-    if (loginForm) loginForm.addEventListener("submit", loginUser);
+
+    const loginForm =
+        document.getElementById("login-Form");
+
+    if (loginForm) {
+        loginForm.addEventListener("submit", loginUser);
+    }
+
 });
