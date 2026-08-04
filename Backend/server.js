@@ -16,7 +16,15 @@ const app = express();
 
 // Standard Middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: [
+        "https://spendwise-61xx.onrender.com",
+        "http://localhost:5173"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+}));
 
 
 // Current directory context (Supports both root and subfolder execution)
@@ -53,11 +61,13 @@ mongoose.connect(process.env.MONGODB_URI)
 // ==========================================
 const authRoutes = require('./routes/authRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
-
+const budgetRoutes = require('./routes/budgetRoutes');
 // Clean Modular Routes
 app.use('/api/auth', authRoutes);         // Handles /api/auth/register, /api/auth/login
 app.use('/api/expenses', expenseRoutes);   // Handles /api/expenses/ add, get, delete, OCR
 
+
+app.use('/api/budget', budgetRoutes);
 // ==========================================
 // AI TIPS ROUTE
 // ==========================================

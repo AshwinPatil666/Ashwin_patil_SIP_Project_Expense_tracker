@@ -29,7 +29,7 @@ async function loadBudgetPageData(userId) {
 
         // 1. Total Monthly Budget (Fallback to LocalStorage or Default 10000)
         const savedBudget = localStorage.getItem("spendwise_monthly_budget");
-        const totalBudget = savedBudget ? Number(savedBudget) : 10000;
+        const totalBudget = savedBudget ? Number(savedBudget) : 0;
 
         // 2. Fetch Expenses from MongoDB
         const headers = { "Content-Type": "application/json" };
@@ -170,7 +170,7 @@ window.saveAllCategoryBudgets = function() {
     });
 
     localStorage.setItem("spendwise_category_budgets", JSON.stringify(savedCatBudgets));
-    alert("Saare category budgets successfully update ho gaye!");
+    alert("All category budgets updated!");
     
     const userId = localStorage.getItem("currentUserId");
     loadBudgetPageData(userId);
@@ -249,7 +249,7 @@ window.saveModalBudget = async function () {
     const category = categorySelect ? categorySelect.value : 'Food';
 
     if (!amount || amount <= 0) {
-        alert("Kripya valid amount enter karein.");
+        alert("Please enter a valid amount.");
         return;
     }
 
