@@ -15,7 +15,7 @@ async function loginUser(event) {
         return;
     }
 
-    const submitBtn = document.querySelector("#login-form button[type='submit']") || document.querySelector("button");
+    const submitBtn = document.querySelector("#login-Form button[type='submit']") || document.querySelector("button");
     const originalText = submitBtn ? submitBtn.innerText : "Login";
     if (submitBtn) {
         submitBtn.innerText = "Connecting to Render... ⏳";
@@ -76,6 +76,6 @@ async function loginUser(event) {
 window.loginUser = loginUser;
 
 document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.getElementById("login-form");
+    const loginForm = document.getElementById("login-Form");
     if (loginForm) loginForm.addEventListener("submit", loginUser);
 });

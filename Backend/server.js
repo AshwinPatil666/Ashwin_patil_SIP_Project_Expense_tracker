@@ -7,6 +7,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 // Middlewares Import
 const errorHandler = require('./middleware/errorMiddleware');
@@ -17,39 +18,28 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ==========================================
-// STATIC FILES SERVING (404 FIX HERE 🚀)
-// ==========================================
-// ==========================================
-// STATIC FILES & FRONTEND SERVING (PERMANENT FIX 🚀)
-// ==========================================
-const rootPath = path.join(__dirname, '../'); // Root directory path
 
-// 1. Uploads Folder
-// ==========================================
-// STATIC FILES SERVING (DIRECT ROOT PATH FIX)
-// ==========================================
-// Check karein ki server.js root me hai ya backend folder me
-const rootDir = path.resolve(__dirname, '..'); // Agar server.js backend subfolder me hai
-// const rootDir = __dirname;                 // Agar server.js main root folder me hi hai
+// Current directory context (Supports both root and subfolder execution)
+const frontendPath = path.join(__dirname, 'frontend'); // Agar server.js root me hai
+const parentFrontendPath = path.join(__dirname, '../frontend'); // Agar server.js backend folder me hai
 
-// 1. Uploads
-// Root folder path
+// Automatically resolve correct frontend root
+const rootDir = fs.existsSync(frontendPath) ? frontendPath : parentFrontendPath;
 
-// Serve All Static Asset Folders Directly
+// 1. Serve All Static Asset Folders
 app.use(express.static(rootDir));
 app.use('/js', express.static(path.join(rootDir, 'js')));
 app.use('/css', express.static(path.join(rootDir, 'css')));
 app.use('/pages', express.static(path.join(rootDir, 'pages')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// HTML Fallback Routes
+// 2. HTML Fallback Routes
 app.get('/', (req, res) => {
-    res.sendFile(path.join(rootPath, 'registor.html'));
+    res.sendFile(path.join(rootDir, 'pages', 'registor.html'));
 });
 
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(rootPath, 'pages', 'login.html'));
+    res.sendFile(path.join(rootDir, 'pages', 'login.html'));
 });
 // ==========================================
 // MONGODB CONNECTION

@@ -1,39 +1,41 @@
+// ==========================================
+// CONFIGURATION & GLOBAL CONSTANTS
+// ==========================================
+const API_BASE_URL = 'https://ashwin-patil-sip-project-expense-tracker.onrender.com/api';
+
+// ==========================================
+// INITIALIZATION ON DOM LOAD
+// ==========================================
 document.addEventListener("DOMContentLoaded", async () => {
+    console.log("Budget script initialized successfully.");
+    
     const userId = localStorage.getItem("currentUserId");
     if (!userId) {
         alert("Please login first!");
         window.location.href = "login.html";
         return;
     }
+    
+    // Initial page data load
     await loadBudgetPageData(userId);
 });
 
-// Dropdown change hone par category box dikhana ya chupana
-function toggleBudgetFields() {
-    const typeSelect = document.getElementById("budget-type-select")?.value;
-    const categoryBox = document.getElementById("category-box");
-    
-    if (categoryBox) {
-        if (typeSelect === "category") {
-            categoryBox.style.display = "block";
-        } else {
-            categoryBox.style.display = "none";
-        }
-    }
-}
-
-// Main function jo saari values aur table calculate karega
 // ==========================================
-// MAIN BUDGET PAGE DATA & PROGRESS LOADER
+// MAIN BUDGET DATA & PROGRESS LOADER
 // ==========================================
 async function loadBudgetPageData(userId) {
     try {
-        // 1. Total Monthly Budget (Default 10,000 agar set na ho)
+        const token = localStorage.getItem('token');
+
+        // 1. Total Monthly Budget (Fallback to LocalStorage or Default 10000)
         const savedBudget = localStorage.getItem("spendwise_monthly_budget");
         const totalBudget = savedBudget ? Number(savedBudget) : 10000;
 
         // 2. Fetch Expenses from MongoDB
-        const response = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`);
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        const response = await fetch(`${API_BASE_URL}/expenses/${userId}`, { headers });
         const expenses = await response.json();
 
         let totalSpent = 0;
@@ -50,21 +52,20 @@ async function loadBudgetPageData(userId) {
             });
         }
 
-        // 3. Exact Math Calculations
+        // 3. Calculations
         const remaining = totalBudget - totalSpent;
 
-        // Dynamic Percentages
         let rawUsedPercent = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
         let usedPercent = Math.round(rawUsedPercent);
         let leftPercent = Math.max(100 - usedPercent, 0);
 
-        // Daily Limit Calculation (Remaining Days basis)
+        // Daily Limit Calculation (Based on Remaining Days in Month)
         const today = new Date();
         const totalDaysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
         const remainingDays = Math.max(totalDaysInMonth - today.getDate() + 1, 1);
         let dailyLimit = remaining > 0 ? Math.round(remaining / remainingDays) : 0;
 
-        // 4. Update Main Text Elements
+        // 4. Update UI Text Elements
         const totalBudgetEl = document.getElementById("ui-total-budget");
         const totalSpentEl = document.getElementById("ui-total-spent");
         const remainingEl = document.getElementById("ui-remaining");
@@ -87,13 +88,13 @@ async function loadBudgetPageData(userId) {
         if (percentUsedEl) percentUsedEl.innerText = `${usedPercent}% Used`;
         if (percentLeftEl) percentLeftEl.innerText = `${leftPercent}% Left`;
 
-        // 6. Update Progress Bar Percent Text (Jahan 62% dikh raha tha)
+        // 6. Update Progress Bar Percent Text
         const progressTextEl = document.getElementById("ui-progress-percent-text");
         if (progressTextEl) {
             progressTextEl.innerText = `${usedPercent}%`;
         }
 
-        // 7. Update Progress Bar Width (CSS Styles Safe Range: 0% to 100%)
+        // 7. Update Progress Bar Fill Width
         const progressFillEl = document.getElementById("ui-progress-fill");
         if (progressFillEl) {
             let fillWidth = Math.min(Math.max(rawUsedPercent, 0), 100);
@@ -102,17 +103,17 @@ async function loadBudgetPageData(userId) {
         }
 
         // 8. Refresh Category Table & AI Tips
-        if (typeof updateCategoryTable === "function") updateCategoryTable(categorySpent);
-        if (typeof loadAIBudgetTips === "function") loadAIBudgetTips(totalBudget, totalSpent, categorySpent);
+        updateCategoryTable(categorySpent);
+        loadAIBudgetTips(totalBudget, totalSpent, categorySpent);
 
     } catch (error) {
         console.error("Error loading budget data:", error);
     }
 }
 
-        // Category Table and AI Tips Refresh
-   
-// Category Table ko render karne ka function (Direct Inputs)
+// ==========================================
+// CATEGORY TABLE RENDERER
+// ==========================================
 function updateCategoryTable(categorySpent) {
     const savedCatBudgets = JSON.parse(localStorage.getItem("spendwise_category_budgets")) || {
         Food: 10000,
@@ -125,7 +126,7 @@ function updateCategoryTable(categorySpent) {
     const tbody = document.getElementById("category-table-body") || document.querySelector("table tbody");
     if (!tbody) return;
 
-    tbody.innerHTML = ""; // Purani rows saaf karna
+    tbody.innerHTML = ""; 
 
     for (let cat in savedCatBudgets) {
         const catBudget = savedCatBudgets[cat];
@@ -133,13 +134,13 @@ function updateCategoryTable(categorySpent) {
         const catRemaining = catBudget - catSpent;
         
         let status = "Healthy";
-        let statusColor = "green";
+        let statusColor = "#16a34a";
         if (catRemaining < 0) {
             status = "Exceeded";
-            statusColor = "red";
+            statusColor = "#ef4444";
         } else if (catSpent > catBudget * 0.8) {
             status = "Warning";
-            statusColor = "orange";
+            statusColor = "#f59e0b";
         }
 
         const row = `
@@ -157,8 +158,8 @@ function updateCategoryTable(categorySpent) {
     }
 }
 
-// Ek hi click me saare category budgets save karne ka function
-function saveAllCategoryBudgets() {
+// Save all categories at once
+window.saveAllCategoryBudgets = function() {
     const inputs = document.querySelectorAll(".cat-budget-input");
     let savedCatBudgets = JSON.parse(localStorage.getItem("spendwise_category_budgets")) || {};
 
@@ -173,9 +174,10 @@ function saveAllCategoryBudgets() {
     
     const userId = localStorage.getItem("currentUserId");
     loadBudgetPageData(userId);
-}
+};
 
-
+// ==========================================
+// AI TIPS GENERATOR
 // ==========================================
 async function loadAIBudgetTips(totalBudget, totalSpent, categorySpent) {
     const tipsList = document.getElementById("ai-budget-tips-list");
@@ -184,8 +186,7 @@ async function loadAIBudgetTips(totalBudget, totalSpent, categorySpent) {
     tipsList.innerHTML = "<li>🤖 Generating personalized AI tips...</li>";
 
     try {
-        // Direct Apne Backend Ko Call Karo
-        const response = await fetch("https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/ai-tips", {
+        const response = await fetch(`${API_BASE_URL}/ai-tips`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ totalBudget, totalSpent, categorySpent })
@@ -213,31 +214,10 @@ async function loadAIBudgetTips(totalBudget, totalSpent, categorySpent) {
         tipsList.innerHTML = "<li>⚠️ Error connecting to AI server.</li>";
     }
 }
-function closeBudgetModal() {
-    const modal = document.getElementById("budget-modal");
-    if (modal) modal.style.display = "none";
-}
 
-// Monthly Budget save karne ka logic (Modal se)
-function saveModalBudget() {
-    const amount = Number(document.getElementById("modal-budget-input")?.value);
-
-    if (!amount || amount <= 0) {
-        alert("Kripya ek valid amount dalein!");
-        return;
-    }
-
-    localStorage.setItem("spendwise_monthly_budget", amount);
-    alert("Monthly Budget successfully update ho gaya!");
-
-    closeBudgetModal();
-    const userId = localStorage.getItem("currentUserId");
-    loadBudgetPageData(userId);
-}
-
-const API_BASE_URL = 'https://ashwin-patil-sip-project-expense-tracker.onrender.com/api';
-
-// 1. Modal Open / Close Functions (Attached to window)
+// ==========================================
+// MODAL & DOM WINDOW CONTROLLERS
+// ==========================================
 window.openBudgetModal = function () {
     const modal = document.getElementById('budget-modal');
     if (modal) modal.style.display = 'flex';
@@ -248,73 +228,67 @@ window.closeBudgetModal = function () {
     if (modal) modal.style.display = 'none';
 };
 
-// 2. Category Field Toggle Function
 window.toggleBudgetFields = function () {
     const typeSelect = document.getElementById('budget-type-select');
     const categoryBox = document.getElementById('category-box');
     if (typeSelect && categoryBox) {
-        if (typeSelect.value === 'category') {
-            categoryBox.style.display = 'block';
-        } else {
-            categoryBox.style.display = 'none';
-        }
+        categoryBox.style.display = typeSelect.value === 'category' ? 'block' : 'none';
     }
 };
 
-// 3. Save Budget from Modal Function
 window.saveModalBudget = async function () {
     const token = localStorage.getItem('token');
-    if (!token) {
-        alert("Session expired! Please login again.");
-        window.location.href = "login.html";
-        return;
-    }
+    const userId = localStorage.getItem('currentUserId');
+    
+    const typeSelect = document.getElementById('budget-type-select');
+    const amountInput = document.getElementById('modal-budget-input');
+    const categorySelect = document.getElementById('budget-category-select');
 
-    const type = document.getElementById('budget-type-select').value;
-    const amount = Number(document.getElementById('modal-budget-input').value);
-    const category = document.getElementById('budget-category-select').value;
+    const type = typeSelect ? typeSelect.value : 'monthly';
+    const amount = Number(amountInput ? amountInput.value : 0);
+    const category = categorySelect ? categorySelect.value : 'Food';
 
     if (!amount || amount <= 0) {
         alert("Kripya valid amount enter karein.");
         return;
     }
 
-    const payload = type === 'category' 
-        ? { category: category, amount: amount }
-        : { monthlyLimit: amount };
-
-    const endpoint = type === 'category' 
-        ? `${API_BASE_URL}/budget/category`
-        : `${API_BASE_URL}/budget/monthly`;
-
-    try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            alert("Budget successfully update ho gaya! 🎯");
-            window.closeBudgetModal();
-            // Data refresh karein
-            if (typeof loadBudgetData === 'function') loadBudgetData();
-        } else {
-            alert("Error: " + (data.message || data.error || "Failed to save budget"));
-        }
-    } catch (error) {
-        console.error("Budget save karne me error aaya:", error);
-        alert("Server error. Connection check karein.");
+    // Always update local storage for smooth fallback UI
+    if (type === 'monthly') {
+        localStorage.setItem("spendwise_monthly_budget", amount);
     }
-};
 
-// 4. Page Initializer (DOM Ready)
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("Budget script initialized successfully.");
-    // Initial fetch function agar aapke script me ho toh call karein
-});
+    // Sync with backend API if Token exists
+    if (token) {
+        const payload = type === 'category' 
+            ? { category: category, amount: amount }
+            : { monthlyLimit: amount };
+
+        const endpoint = type === 'category' 
+            ? `${API_BASE_URL}/budget/category`
+            : `${API_BASE_URL}/budget/monthly`;
+
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.warn("Backend Sync Error:", data.message || data.error);
+            }
+        } catch (error) {
+            console.error("Server update failed, saved locally:", error);
+        }
+    }
+
+    alert("Budget successfully update ho gaya! 🎯");
+    window.closeBudgetModal();
+    loadBudgetPageData(userId);
+};
