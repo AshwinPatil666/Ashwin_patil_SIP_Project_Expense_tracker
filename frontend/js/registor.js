@@ -1,7 +1,9 @@
 // ==========================================
 // SPENDWISE REGISTRATION LOGIC (RENDER BACKEND)
 // ==========================================
+ stricktmode = 'use strict';
 
+ 
 const RENDER_API = "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/auth/register";
 
 async function registerUser(event) {
