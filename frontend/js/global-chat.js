@@ -72,15 +72,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const loadingId = appendMsg("Thinking...", "ai");
 
     try {
-        const userId = localStorage.getItem("currentUserId");
-        const userEmail = localStorage.getItem("userEmail") || "User";
-        const totalBudget = localStorage.getItem("spendwise_monthly_budget") || 50000;
+       const userId = localStorage.getItem("currentUserId");
+const userEmail = localStorage.getItem("userEmail") || "User";
+const token = localStorage.getItem("token");
+const totalBudget = localStorage.getItem("spendwise_monthly_budget") || 50000;
+
+if (!token) {
+    updateMsg(loadingId, "Session expired. Please login again.");
+    return;
+}
 
         // Fetch MongoDB Data for Context
         let txns = [];
         if (userId) {
             try {
-                const res = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`);
+                const token = localStorage.getItem("token");
+
+const res = await fetch(
+    `https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`,
+    {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    }
+);
                 if (res.ok) txns = await res.json();
             } catch (e) {
                 console.warn("Could not fetch user expense context:", e);
@@ -91,7 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = await fetch("https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/chat", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                 "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({
                 message: query,

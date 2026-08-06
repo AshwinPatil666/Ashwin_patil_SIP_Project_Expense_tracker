@@ -1,7 +1,7 @@
 // ==========================================
 // SPENDWISE REGISTRATION LOGIC (RENDER BACKEND)
 // ==========================================
- stricktmode = 'use strict';
+'use strict';
 
  
 const RENDER_API = "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/auth/register";
@@ -45,7 +45,12 @@ async function registerUser(event) {
         if (response.ok) {
             const userId = result.user?.id || result.user?._id || "user_123";
 
-            localStorage.setItem("token", result.token || "mock_token");
+           if (!result.token) {
+    alert("Registration succeeded but authentication token was not received.");
+    return;
+}
+
+localStorage.setItem("token", result.token);
             localStorage.setItem("currentUserId", userId);
             localStorage.setItem("userId", userId);
             localStorage.setItem("userName", userName);
@@ -65,8 +70,7 @@ async function registerUser(event) {
         console.error("Register Error:", error);
         alert("Render server waking up or unreachable. Testing fallback activated.");
 
-        localStorage.setItem("currentUserId", "user_123");
-        localStorage.setItem("userId", "user_123");
+      
         localStorage.setItem("userName", userName);
         localStorage.setItem("userEmail", userEmail);
 

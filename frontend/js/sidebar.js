@@ -13,7 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
             <li><a href="ocr.html"><i class="fa-solid fa-camera"></i> OCR Scanner</a></li>
             <li><a href="report.html"><i class="fa-solid fa-file-lines"></i> Reports</a></li>
             <li><a href="setting.html"><i class="fa-solid fa-gear"></i> Settings</a></li>
-            <li><a href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            <li>
+    <a href="#" onclick="logoutUser(); return false;">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </a>
+</li>
         </ul>
     </aside>
     `;

@@ -117,8 +117,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (dropdownLogout) {
         dropdownLogout.addEventListener("click", () => {
             if (confirm("Are you sure you want to log out?")) {
+                localStorage.removeItem("token");
                 localStorage.removeItem("currentUserId");
+
                 localStorage.removeItem("userId");
+                localStorage.removeItem("userName");
+                localStorage.removeItem("userEmail");
                 window.location.href = "login.html";
             }
         });
@@ -127,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------------------------------
     // E. Fetch Data from MongoDB Backend
     // ---------------------------------------------------------
-    loadDashboardData(userId);
+    loadDashboardData();
 });
 
 // ==========================================
@@ -181,57 +185,138 @@ if (search && results) {
 
 // ==========================================
 // 3. FETCH DATA FROM MONGODB (DASHBOARD)
-// ==========================================
 async function loadDashboardData() {
-    const userId = localStorage.getItem("currentUserId");
-    if (!userId) return;
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("currentUserId") || localStorage.getItem("userId");
+
+    if (!token || !userId) {
+        alert("Session expired. Please login again.");
+        window.location.href = "login.html";
+        return;
+    }
 
     try {
-        const response = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`);
-        const data = await response.json();
+        // ============================
+        // EXPENSES FROM MONGODB
+        // ============================
+        const expenseResponse = await fetch(
+            `https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`,
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
 
-        if (response.ok && Array.isArray(data)) {
-            transactions = data; 
-            globalTransactionsForCharts = data;
-            
-            updateDashboard(); 
-            renderAllCharts(transactions); 
-            renderRecentTransactions(transactions);
+        const expenseData = await expenseResponse.json();
+
+        console.log("Expenses API:", expenseResponse.status, expenseData);
+
+        if (expenseResponse.status === 401 || expenseResponse.status === 403) {
+            localStorage.removeItem("token");
+            alert("Session expired. Please login again.");
+            window.location.href = "login.html";
+            return;
         }
+
+        if (!expenseResponse.ok) {
+            console.error("Expense API failed:", expenseData);
+            return;
+        }
+
+        transactions = Array.isArray(expenseData)
+            ? expenseData
+            : expenseData.expenses || [];
+
+        globalTransactionsForCharts = transactions;
+
+        // ============================
+        // BUDGET FROM MONGODB
+        // ============================
+        const budgetResponse = await fetch(
+            "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/budget",
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const budgetData = await budgetResponse.json();
+
+        console.log("Budget API:", budgetResponse.status, budgetData);
+
+        if (budgetResponse.status === 401 || budgetResponse.status === 403) {
+            localStorage.removeItem("token");
+            alert("Session expired. Please login again.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (budgetResponse.ok) {
+            // MongoDB budget ko localStorage me temporary cache
+            localStorage.setItem(
+                "spendwise_monthly_budget",
+                budgetData.monthlyLimit || 0
+            );
+
+            // Dashboard update
+            updateDashboard(budgetData.monthlyLimit || 0);
+        } else {
+            updateDashboard(0);
+        }
+
+        // Charts + transactions
+        renderAllCharts(transactions);
+        renderRecentTransactions(transactions);
+
     } catch (error) {
-        console.error("Failed to load dashboard data:", error);
+        console.error("Dashboard loading error:", error);
     }
 }
 
 // ==========================================
 // 4. DASHBOARD MATH LOGIC
 // ==========================================
-function updateDashboard() {
+function updateDashboard(monthlyBudget = 0) {
+
     let totalExpense = 0;
 
     transactions.forEach(item => {
-        totalExpense += Number(item.amount) || 0;
+        // Income ko expense me count mat karo
+        if (item.type !== "income") {
+            totalExpense += Number(item.amount) || 0;
+        }
     });
 
-    const totalBudget = Number(localStorage.getItem("spendwise_monthly_budget")) || 50000;
-    let currentBalance = totalBudget - totalExpense; 
+    const totalBudget = Number(monthlyBudget) || 0;
 
-    // HTML elements update karein
-    const cardValues = document.querySelectorAll('.card h2');
-    
+    const currentBalance = totalBudget - totalExpense;
+
+    const cardValues = document.querySelectorAll(".card h2");
+
     if (cardValues.length >= 3) {
-        cardValues[0].innerText = "₹" + totalExpense.toLocaleString();     // Total Expense
-        cardValues[1].innerText = "₹" + totalBudget.toLocaleString();    // Total Budget
-        cardValues[2].innerText = "₹" + currentBalance.toLocaleString();  // Remaining / Balance
+        cardValues[0].innerText =
+            "₹" + totalExpense.toLocaleString("en-IN");
+
+        cardValues[1].innerText =
+            "₹" + totalBudget.toLocaleString("en-IN");
+
+        cardValues[2].innerText =
+            "₹" + currentBalance.toLocaleString("en-IN");
     }
 
     const savingsEl = document.getElementById("ui-savings");
+
     if (savingsEl) {
-        let savings = totalBudget - totalExpense;
-        savingsEl.innerText = "₹" + (savings > 0 ? savings.toLocaleString() : 0);
+        savingsEl.innerText =
+            "₹" + Math.max(currentBalance, 0).toLocaleString("en-IN");
     }
 }
-
 // ==========================================
 // 5. CHART FILTER & RENDER LOGIC
 // ==========================================
@@ -493,7 +578,7 @@ async function handleAddTransaction(event) {
             
             // Reload dashboard stats & charts
             if (typeof loadDashboardData === "function") {
-                loadDashboardData(userId);
+                loadDashboardData();
             } else {
                 window.location.reload();
             }

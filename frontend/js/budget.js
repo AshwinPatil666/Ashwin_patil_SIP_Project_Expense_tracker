@@ -28,9 +28,22 @@ async function loadBudgetPageData(userId) {
         const token = localStorage.getItem('token');
 
         // 1. Total Monthly Budget (Fallback to LocalStorage or Default 10000)
-        const savedBudget = localStorage.getItem("spendwise_monthly_budget");
-        const totalBudget = savedBudget ? Number(savedBudget) : 0;
+       const budgetResponse = await fetch(`${API_BASE_URL}/budget`, {
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+    }
+});
 
+if (!budgetResponse.ok) {
+    throw new Error("Failed to fetch budget");
+}
+
+const budgetData = await budgetResponse.json();
+
+const totalBudget = Number(budgetData.monthlyLimit) || 0;
+
+const categoryBudgets = budgetData.categoryBudgets || {};
         // 2. Fetch Expenses from MongoDB
         const headers = { "Content-Type": "application/json" };
         if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -103,7 +116,7 @@ async function loadBudgetPageData(userId) {
         }
 
         // 8. Refresh Category Table & AI Tips
-        updateCategoryTable(categorySpent);
+        updateCategoryTable(categorySpent, categoryBudgets);
         loadAIBudgetTips(totalBudget, totalSpent, categorySpent);
 
     } catch (error) {
@@ -114,27 +127,34 @@ async function loadBudgetPageData(userId) {
 // ==========================================
 // CATEGORY TABLE RENDERER
 // ==========================================
-function updateCategoryTable(categorySpent) {
-    const savedCatBudgets = JSON.parse(localStorage.getItem("spendwise_category_budgets")) || {
-        Food: 10000,
-        Transport: 6000,
-        Shopping: 8000,
-        Entertainment: 5000,
-        Bills: 7000
+function updateCategoryTable(categorySpent, categoryBudgets) {
+
+    const savedCatBudgets = {
+        Food: 0,
+        Transport: 0,
+        Shopping: 0,
+        Entertainment: 0,
+        Bills: 0,
+        ...categoryBudgets
     };
 
-    const tbody = document.getElementById("category-table-body") || document.querySelector("table tbody");
+    const tbody =
+        document.getElementById("category-table-body") ||
+        document.querySelector("table tbody");
+
     if (!tbody) return;
 
-    tbody.innerHTML = ""; 
+    tbody.innerHTML = "";
 
-    for (let cat in savedCatBudgets) {
-        const catBudget = savedCatBudgets[cat];
+    for (const cat in savedCatBudgets) {
+
+        const catBudget = Number(savedCatBudgets[cat]) || 0;
         const catSpent = categorySpent[cat] || 0;
         const catRemaining = catBudget - catSpent;
-        
+
         let status = "Healthy";
         let statusColor = "#16a34a";
+
         if (catRemaining < 0) {
             status = "Exceeded";
             statusColor = "#ef4444";
@@ -143,21 +163,31 @@ function updateCategoryTable(categorySpent) {
             statusColor = "#f59e0b";
         }
 
-        const row = `
+        tbody.innerHTML += `
             <tr>
                 <td><strong>${cat}</strong></td>
+
                 <td>
-                    <input type="number" class="cat-budget-input" data-category="${cat}" value="${catBudget}" style="width: 110px; padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
+                    <input
+                        type="number"
+                        class="cat-budget-input"
+                        data-category="${cat}"
+                        value="${catBudget}"
+                        style="width:110px;padding:6px;"
+                    >
                 </td>
+
                 <td>₹${catSpent.toLocaleString()}</td>
+
                 <td>₹${catRemaining.toLocaleString()}</td>
-                <td style="color: ${statusColor}; font-weight: 600;">${status}</td>
+
+                <td style="color:${statusColor};font-weight:600;">
+                    ${status}
+                </td>
             </tr>
         `;
-        tbody.innerHTML += row;
     }
 }
-
 // Save all categories at once
 window.saveAllCategoryBudgets = function() {
     const inputs = document.querySelectorAll(".cat-budget-input");

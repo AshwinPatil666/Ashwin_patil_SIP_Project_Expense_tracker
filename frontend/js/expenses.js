@@ -41,7 +41,23 @@ async function loadUserExpenses() {
     if (!userId) return;
 
     try {
-            const response = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`);
+           const token = localStorage.getItem("token");
+
+         if (!token) {
+    alert("Session expired. Please login again.");
+    window.location.href = "login.html";
+    return;
+}
+
+const response = await fetch(
+    `https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`,
+    {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    }
+);
         const data = await response.json();
 
         if (response.ok && Array.isArray(data)) {
@@ -94,7 +110,7 @@ function updateSummary() {
     expenses.forEach(exp => totalExpense += Number(exp.amount) || 0);
 
     // Budget page wali universal key yahan bhi use ki hai taaki same budget dikhe
-    const totalBudget = Number(localStorage.getItem("spendwise_monthly_budget")) || 50000;
+    const totalBudget = Number(localStorage.getItem("spendwise_monthly_budget"));
     const budgetLeft = totalBudget - totalExpense;
 
     if(cards.length >= 4) {
@@ -108,15 +124,47 @@ function updateSummary() {
 // ==========================================
 // 6. DELETE EXPENSE LOGIC
 // ==========================================
-window.deleteExpense = function(index) {
-    if(confirm("Are you sure you want to delete this expense?")) {
-        expenses.splice(index, 1); 
-        renderExpenseTable(expenses); 
-        updateSummary(); 
-        renderChart(); 
+window.deleteExpense = async function(index) {
+    if (!confirm("Are you sure you want to delete this expense?")) {
+        return;
     }
-}
 
+    const expense = expenses[index];
+
+    if (!expense || !expense._id) {
+        alert("Expense ID not found.");
+        return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    try {
+        const response = await fetch(
+            `https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${expense._id}`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || data.error || "Delete failed");
+        }
+
+        // MongoDB se delete successful hone ke baad
+        await loadUserExpenses();
+
+        alert("Expense deleted successfully!");
+
+    } catch (error) {
+        console.error("Delete Expense Error:", error);
+        alert("Expense delete nahi ho paya.");
+    }
+};
 // ==========================================
 // 7. MASTER FILTER LOGIC (Search + Dropdowns)
 // ==========================================
@@ -205,17 +253,28 @@ if(form) {
                 body: JSON.stringify(newExpense)
             });
 
-            if(response.ok) {
-                expenses.unshift(newExpense); 
-                renderExpenseTable(expenses);
-                updateSummary();
-                renderChart();
+          if (response.ok) {
 
-                form.reset();
-                if(modal) modal.style.display = "none";
-            } else {
-                alert("Data save nahi hua!");
-            }
+             form.reset();
+
+                  if (modal) {
+                      modal.style.display = "none";
+                        }
+
+                   // MongoDB se fresh data reload
+                  await loadUserExpenses();
+  
+                   alert("Expense saved successfully! 🎉");
+
+              }  else {
+
+    const errorData = await response.json();
+
+    alert(
+        "Data save nahi hua: " +
+        (errorData.message || errorData.error || "Server error")
+    );
+}
         } catch (error) {
             console.error("Error:", error);
         }

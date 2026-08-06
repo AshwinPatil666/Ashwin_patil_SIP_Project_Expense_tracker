@@ -35,7 +35,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadAndAnalyzeInsights(userId) {
     try {
         // 1. Fetch real user transactions from MongoDB backend
-        const response = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`);
+     const response = await fetch(
+    `https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`,
+    {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }
+    }
+);
         const transactions = await response.json();
 
         if (!response.ok || !Array.isArray(transactions)) {
@@ -64,7 +73,25 @@ async function loadAndAnalyzeInsights(userId) {
             }
         }
 
-        const monthlyBudget = Number(localStorage.getItem("spendwise_monthly_budget")) || 40000;
+      const budgetResponse = await fetch(
+    "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/budget",
+    {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }
+    }
+);
+
+const budgetData = await budgetResponse.json();
+
+if (!budgetResponse.ok) {
+    console.error("Budget fetch failed:", budgetData);
+    return;
+}
+
+const monthlyBudget = Number(budgetData.monthlyLimit) || 0;
         const estimatedSavings = Math.max(0, monthlyBudget - totalExpense);
         const savingsPercentage = monthlyBudget > 0 ? Math.round((estimatedSavings / monthlyBudget) * 100) : 0;
 

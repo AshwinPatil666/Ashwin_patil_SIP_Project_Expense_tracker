@@ -247,13 +247,17 @@ async function saveOcrExpense() {
         return;
     }
 
+  
     const expensePayload = {
-        userId: userId,
-        amount: Number(amount),
-        category: category,
-        description: `Receipt #${receiptNo} - ${merchant}`,
-        date: date
-    };
+    userId: userId,
+    amount: Number(amount),
+    category: category,
+    title: merchant,
+    payment: "Other",
+    status: "Paid",
+    description: `Receipt #${receiptNo} - ${merchant}`,
+    date: date
+};
 
     try {
         const response = await fetch('https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add', {

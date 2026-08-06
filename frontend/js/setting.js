@@ -86,8 +86,8 @@ async function updatePassword() {
     const currentPasswordInput = document.getElementById("current-password");
     const newPasswordInput = document.getElementById("new-password");
 
-    const currentPassword = currentPasswordInput.value;
-    const newPassword = newPasswordInput.value;
+const currentPassword = currentPasswordInput?.value || "";
+const newPassword = newPasswordInput?.value || "";
     const userId = localStorage.getItem("currentUserId");
 
     if (!currentPassword || !newPassword) {
