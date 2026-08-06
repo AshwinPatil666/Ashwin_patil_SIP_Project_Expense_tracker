@@ -30,10 +30,10 @@ router.post('/add-expense', verifyToken, async (req, res) => {
     console.error("ERROR DETAILS:", error);
 
     res.status(500).json({
-        success: false,
-        message: "Error occurred while adding expense.",
-        error: error.message
-    });
+    success: false,
+    message: error.message,
+    error: error
+});
 }
 });
 
