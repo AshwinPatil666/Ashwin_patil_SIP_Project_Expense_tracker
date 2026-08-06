@@ -549,9 +549,14 @@ function switchTransType(type) {
 async function handleAddTransaction(event) {
     event.preventDefault();
 
-    const userId = localStorage.getItem("currentUserId") || localStorage.getItem("userId");
-    if (!userId) {
-        alert("Please login first!");
+    const userId =
+        localStorage.getItem("currentUserId") ||
+        localStorage.getItem("userId");
+
+    const token = localStorage.getItem("token");
+
+    if (!userId || !token) {
+        alert("Session expired. Please login again!");
         window.location.href = "login.html";
         return;
     }
@@ -561,7 +566,8 @@ async function handleAddTransaction(event) {
     const category = document.getElementById("trans-category").value;
     const paymentMode = document.getElementById("trans-payment").value;
     const date = document.getElementById("trans-date").value;
-    const description = document.getElementById("trans-desc").value || category;
+    const description =
+        document.getElementById("trans-desc").value || category;
 
     const payload = {
         userId,
@@ -574,44 +580,51 @@ async function handleAddTransaction(event) {
     };
 
     try {
-       const token = localStorage.getItem("token");
-
-if (!token) {
-    alert("Session expired. Please login again.");
-    window.location.href = "login.html";
-    return;
-}
-
-const response = await fetch(
-    "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-    }
-);
-
-        if (response.ok) {
-            alert(`${type === 'income' ? 'Income' : 'Expense'} entry saved successfully! 🎉`);
-            document.getElementById("expense-modal").style.display = "none";
-            document.getElementById("expense-form").reset();
-            
-            // Reload dashboard stats & charts
-            if (typeof loadDashboardData === "function") {
-                loadDashboardData();
-            } else {
-                window.location.reload();
+       const response = await fetch(
+    "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add-expense",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
             }
-        } else {
-            const err = await response.json();
-            alert("Error: " + (err.error || "Failed to save transaction"));
+        );
+
+        const data = await response.json();
+
+        console.log("Add Expense Response:", response.status, data);
+
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem("token");
+                alert("Session expired. Please login again.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            alert(
+                `Failed (${response.status}): ` +
+                (data.message || data.error || "Failed to save transaction")
+            );
+
+            return;
         }
+
+        alert(
+            `${type === "income" ? "Income" : "Expense"} entry saved successfully! 🎉`
+        );
+
+        document.getElementById("expense-modal").style.display = "none";
+        document.getElementById("expense-form").reset();
+
+        // MongoDB se fresh data reload
+        await loadDashboardData();
+
     } catch (error) {
         console.error("Save Transaction Error:", error);
-        alert("Server connection failed. Make sure backend is running.");
+        alert("Error: " + error.message);
     }
 }
 

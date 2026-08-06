@@ -7,16 +7,33 @@ const verifyToken = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
 // 1. ADD EXPENSE API
-router.post('/add-expense', async (req, res) => {
+router.post('/add-expense', verifyToken, async (req, res) => {
     try {
         console.log("Received expense data:", req.body);
-        const expenseData = req.body;
+
+        const expenseData = {
+            ...req.body,
+            userId: req.user.id
+        };
+
         const newRecord = new Expense(expenseData);
+
         await newRecord.save();
-        res.status(201).json({ success: true, message: "Expense added successfully!" });
+
+        res.status(201).json({
+            success: true,
+            message: "Expense added successfully!",
+            expense: newRecord
+        });
+
     } catch (error) {
         console.error("Error occurred while adding expense:", error);
-        res.status(500).json({ message: "Error occurred while adding expense." });
+
+        res.status(500).json({
+            success: false,
+            message: "Error occurred while adding expense.",
+            error: error.message
+        });
     }
 });
 
