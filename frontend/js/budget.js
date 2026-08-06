@@ -189,21 +189,67 @@ function updateCategoryTable(categorySpent, categoryBudgets) {
     }
 }
 // Save all categories at once
-window.saveAllCategoryBudgets = function() {
+window.saveAllCategoryBudgets = async function () {
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("Session expired. Please login again.");
+        window.location.href = "login.html";
+        return;
+    }
+
     const inputs = document.querySelectorAll(".cat-budget-input");
-    let savedCatBudgets = JSON.parse(localStorage.getItem("spendwise_category_budgets")) || {};
 
-    inputs.forEach(input => {
-        const cat = input.getAttribute("data-category");
-        const val = Number(input.value) || 0;
-        savedCatBudgets[cat] = val;
-    });
+    try {
 
-    localStorage.setItem("spendwise_category_budgets", JSON.stringify(savedCatBudgets));
-    alert("All category budgets updated!");
-    
-    const userId = localStorage.getItem("currentUserId");
-    loadBudgetPageData(userId);
+        for (const input of inputs) {
+
+            const category = input.getAttribute("data-category");
+            const amount = Number(input.value) || 0;
+
+            if (amount < 0) {
+                alert(`${category} budget cannot be negative.`);
+                return;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/budget/category`, {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+
+                body: JSON.stringify({
+                    category: category,
+                    amount: amount
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    data.error ||
+                    `Failed to save ${category} budget`
+                );
+            }
+        }
+
+        alert("All category budgets updated successfully! 🎯");
+
+        // Backend se fresh data reload
+        const userId = localStorage.getItem("currentUserId");
+        await loadBudgetPageData(userId);
+
+    } catch (error) {
+
+        console.error("Category Budget Save Error:", error);
+
+        alert("Category budget save nahi hua. Backend check karo.");
+    }
 };
 
 // ==========================================
@@ -346,21 +392,12 @@ window.saveModalBudget = async function () {
             return;
         }
 
-        // Backend successfully saved
-        if (type === "monthly") {
-            localStorage.setItem(
-                "spendwise_monthly_budget",
-                amount
-            );
-        }
+        
+alert("Budget successfully updated! 🎯");
 
-        alert("Budget successfully updated! 🎯");
+window.closeBudgetModal();
 
-        window.closeBudgetModal();
-
-        if (typeof loadBudgetPageData === "function") {
-            loadBudgetPageData(userId);
-        }
+await loadBudgetPageData(userId);
 
     } catch (error) {
 

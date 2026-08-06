@@ -199,16 +199,25 @@ async function loadDashboardData() {
         // ============================
         // EXPENSES FROM MONGODB
         // ============================
-        const expenseResponse = await fetch(
-            `https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`,
-            {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            }
-        );
+        const token = localStorage.getItem("token");
+
+if (!token) {
+    alert("Session expired. Please login again.");
+    window.location.href = "login.html";
+    return;
+}
+
+const response = await fetch(
+    "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add",
+    {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+    }
+);
 
         const expenseData = await expenseResponse.json();
 
@@ -565,11 +574,25 @@ async function handleAddTransaction(event) {
     };
 
     try {
-        const response = await fetch("https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
+       const token = localStorage.getItem("token");
+
+if (!token) {
+    alert("Session expired. Please login again.");
+    window.location.href = "login.html";
+    return;
+}
+
+const response = await fetch(
+    "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add",
+    {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+    }
+);
 
         if (response.ok) {
             alert(`${type === 'income' ? 'Income' : 'Expense'} entry saved successfully! 🎉`);
