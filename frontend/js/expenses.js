@@ -158,11 +158,11 @@ window.deleteExpense = async function(index) {
         // MongoDB se delete successful hone ke baad
         await loadUserExpenses();
 
-        alert("Expense deleted successfully!");
+        
 
     } catch (error) {
         console.error("Delete Expense Error:", error);
-        alert("Expense delete nahi ho paya.");
+        alert("Error deleting expense: " + (error.message || "Server error"));
     }
 };
 // ==========================================
@@ -247,40 +247,47 @@ if(form) {
         };
 
         try {
-            const response = await fetch('https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newExpense)
-            });
+    const token = localStorage.getItem("token");
 
-          if (response.ok) {
-
-             form.reset();
-
-                  if (modal) {
-                      modal.style.display = "none";
-                        }
-
-                   // MongoDB se fresh data reload
-                  await loadUserExpenses();
-  
-                   alert("Expense saved successfully! 🎉");
-
-              }  else {
-
-    const errorData = await response.json();
-
-    alert(
-        "Data save nahi hua: " +
-        (errorData.message || errorData.error || "Server error")
-    );
-}
-        } catch (error) {
-            console.error("Error:", error);
+    const response = await fetch(
+        'https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add-expense',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(newExpense)
         }
+    );
+
+    const data = await response.json();
+
+    console.log("Add Expense Response:", response.status, data);
+
+    if (response.ok) {
+        form.reset();
+
+        if (modal) {
+            modal.style.display = "none";
+        }
+
+        await loadUserExpenses();
+
+
+    } else {
+        alert(
+            "Data is not saved:" +
+            (data.message || data.error || "Server error")
+        );
+    }
+
+} catch (error) {
+    console.error("Add Expense Error:", error);
+    alert("Server connection failed.");
+}
     });
 }
-
 // ==========================================
 // 9. EXPENSE PIE CHART LOGIC
 // ==========================================

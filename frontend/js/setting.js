@@ -50,35 +50,56 @@ function loadUserSettings() {
 // ==========================================
 async function updateProfile() {
     const nameInput = document.getElementById("setting-name");
-    const newName = nameInput ? nameInput.value.trim() : "";
-    const userId = localStorage.getItem("currentUserId");
+    const newName = nameInput?.value.trim();
+    const token = localStorage.getItem("token");
 
     if (!newName) {
         alert("Name cannot be empty!");
         return;
     }
 
+    if (!token) {
+        alert("Please login again.");
+        window.location.href = "login.html";
+        return;
+    }
+
     try {
-        // Local storage update
-        localStorage.setItem("userName", newName);
-        
-        // Optional: Agar aap backend par bhi update bhejna chahte hain toh yahan API call laga sakte hain
-        
-        const response = await fetch(`https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/users/update/${userId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: newName })
-        });
-        if (!response.ok) throw new Error("Failed to update profile on server");
-        
+        const response = await fetch(
+            "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/auth/profile",
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name: newName
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        console.log("Profile Update:", response.status, data);
+
+        if (!response.ok) {
+            throw new Error(data.message || "Profile update failed");
+        }
+
+        // LocalStorage sync
+        localStorage.setItem("userName", data.user.name);
 
         alert("Profile updated successfully!");
+
+        // Dashboard name immediately update hoga
+        window.location.href = "dashboard.html";
+
     } catch (error) {
-        console.error("Error updating profile:", error);
-        alert("Something went wrong while updating profile.");
+        console.error("Profile Update Error:", error);
+        alert(error.message);
     }
 }
-
 // ==========================================
 // 4. UPDATE PASSWORD
 // ==========================================
@@ -145,9 +166,12 @@ function savePreferences() {
 // ==========================================
 function logoutUser() {
     if (confirm("Are you sure you want to logout?")) {
+        localStorage.removeItem("token");
         localStorage.removeItem("currentUserId");
+        localStorage.removeItem("userId");
         localStorage.removeItem("userEmail");
         localStorage.removeItem("userName");
+
         window.location.href = "login.html";
     }
 }

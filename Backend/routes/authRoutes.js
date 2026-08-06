@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 
 // Perfect relative path as per your folder structure
 const User = require('../model/user');
-
+const verifyToken = require('../middleware/authMiddleware');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
@@ -93,6 +93,52 @@ router.post('/login', async (req, res) => {
     console.error('Login Error:', error);
     res.status(500).json({ message: 'Server error during login', error: error.message });
   }
+});
+
+// -------------------------------------------------------------
+// 3. UPDATE USER PROFILE (PUT /api/auth/profile)
+// -------------------------------------------------------------
+router.put('/profile', verifyToken, async (req, res) => {
+    try {
+        const { name } = req.body;
+
+        if (!name || !name.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Name cannot be empty"
+            });
+        }
+
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        user.name = name.trim();
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        console.error("Profile Update Error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to update profile"
+        });
+    }
 });
 
 module.exports = router;

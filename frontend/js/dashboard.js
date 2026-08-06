@@ -89,13 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const profileDropdown = document.getElementById("profile-dropdown");
 
     // Notification Dropdown Toggle
-    if (notifBtn && notifDropdown) {
-        notifBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            if (profileDropdown) profileDropdown.style.display = "none"; // Close profile menu
-            notifDropdown.style.display = notifDropdown.style.display === "block" ? "none" : "block";
-        });
-    }
+   
 
     // Profile Dropdown Toggle
     if (profileBtn && profileDropdown) {
@@ -279,7 +273,7 @@ globalTransactionsForCharts = transactions;
         // Charts + transactions
         renderAllCharts(transactions);
         renderRecentTransactions(transactions);
-
+        generateNotifications();
     } catch (error) {
         console.error("Dashboard loading error:", error);
     }
@@ -599,7 +593,7 @@ async function handleAddTransaction(event) {
             return;
         }
 
-        alert("Expense added successfully!");
+        
 
         document.getElementById("expense-modal").style.display = "none";
         document.getElementById("expense-form").reset();
@@ -639,4 +633,113 @@ function renderRecentTransactions(expenses) {
         `;
         tbody.appendChild(row);
     });
+}
+
+
+function generateNotifications() {
+    const notifList = document.getElementById("notification-list");
+    const notifBadge = document.getElementById("notification-badge");
+
+    if (!notifList) return;
+
+    const notifications = [];
+
+    // Current transactions se data
+    const expenseList = transactions.filter(
+        item => item.type !== "income"
+    );
+
+    const totalExpense = expenseList.reduce(
+        (sum, item) => sum + (Number(item.amount) || 0),
+        0
+    );
+
+    const monthlyBudget = Number(
+        localStorage.getItem("spendwise_monthly_budget")
+    ) || 0;
+
+
+    // 1. No transactions
+    if (expenseList.length === 0) {
+        notifications.push({
+            icon: "💡",
+            text: "No expenses added yet.",
+            type: "info"
+        });
+    }
+
+
+    // 2. Budget exceeded
+    if (monthlyBudget > 0 && totalExpense > monthlyBudget) {
+        notifications.push({
+            icon: "🚨",
+            text: `Budget exceeded by ₹${(
+                totalExpense - monthlyBudget
+            ).toLocaleString("en-IN")}.`,
+            type: "danger"
+        });
+    }
+
+
+    // 3. Budget 80%+
+    else if (
+        monthlyBudget > 0 &&
+        totalExpense >= monthlyBudget * 0.8
+    ) {
+        const percentage = Math.round(
+            (totalExpense / monthlyBudget) * 100
+        );
+
+        notifications.push({
+            icon: "⚠️",
+            text: `You have used ${percentage}% of your monthly budget.`,
+            type: "warning"
+        });
+    }
+
+
+    // 4. Budget remaining
+    if (monthlyBudget > 0 && totalExpense < monthlyBudget) {
+        const remaining = monthlyBudget - totalExpense;
+
+        notifications.push({
+            icon: "💰",
+            text: `₹${remaining.toLocaleString("en-IN")} budget remaining.`,
+            type: "success"
+        });
+    }
+
+
+    // Render
+    notifList.innerHTML = "";
+
+    notifications.forEach(notification => {
+
+        const item = document.createElement("div");
+
+        item.className = `notification-item ${notification.type}`;
+
+        item.innerHTML = `
+            <span class="notification-icon">
+                ${notification.icon}
+            </span>
+
+            <span class="notification-text">
+                ${notification.text}
+            </span>
+        `;
+
+        notifList.appendChild(item);
+    });
+
+
+    // Notification count
+    if (notifBadge) {
+        notifBadge.innerText = notifications.length;
+
+        notifBadge.style.display =
+            notifications.length > 0
+                ? "flex"
+                : "none";
+    }
 }

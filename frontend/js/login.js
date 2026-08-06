@@ -22,7 +22,7 @@ async function loginUser(event) {
     const originalText = submitBtn?.innerText || "Sign In";
 
     if (submitBtn) {
-        submitBtn.innerText = "Connecting to Render... ⏳";
+        submitBtn.innerText = "Connecting...";
         submitBtn.disabled = true;
     }
 
@@ -88,7 +88,7 @@ async function loginUser(event) {
 
         console.log("JWT saved successfully");
 
-        alert("Login Successful! 🚀");
+        
 
         // ==============================
         // REDIRECT

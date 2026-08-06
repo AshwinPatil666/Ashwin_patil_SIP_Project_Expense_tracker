@@ -61,7 +61,7 @@ function previewReceipt(event) {
 async function processReceiptScan() {
     const fileInput = document.getElementById("receipt-file-input");
     if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-        alert("Pehle koi receipt upload karein ya camera se photo kheechein!");
+        alert("Please select a receipt image first!");
         return;
     }
 
@@ -91,7 +91,7 @@ async function processReceiptScan() {
 
             console.log("Extracted OCR Text:\n", extractedText);
             parseReceiptData(extractedText);
-            alert("Receipt successfully scan aur parse ho gayi!");
+            alert("OCR Scan Complete! Data auto-filled successfully.");
         } else {
             throw new Error("Tesseract library failed to load");
         }
@@ -243,7 +243,7 @@ async function saveOcrExpense() {
     const date = document.getElementById("ocr-date")?.value || new Date().toISOString().split('T')[0];
 
     if (!amount || Number(amount) <= 0) {
-        alert("Valid amount hona zaroori hai!");
+        alert("Please enter a valid amount before saving the expense.");
         return;
     }
 
@@ -267,11 +267,11 @@ async function saveOcrExpense() {
         });
 
         if (response.ok) {
-            alert("Receipt successfully expense me track ho gayi!");
+            alert("Expense saved successfully! Redirecting to dashboard...");
             window.location.href = "dashboard.html";
         } else {
             const errData = await response.json();
-            alert(`Error: ${errData.error || "Expense save karne me error aayi."}`);
+            alert(`Error: ${errData.error || "Error saving expense."}`);
         }
     } catch (error) {
         console.error("Database Save Error:", error);

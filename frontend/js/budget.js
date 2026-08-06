@@ -8,15 +8,21 @@ const API_BASE_URL = 'https://ashwin-patil-sip-project-expense-tracker.onrender.
 // ==========================================
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("Budget script initialized successfully.");
-    
+
     const userId = localStorage.getItem("currentUserId");
+
     if (!userId) {
         alert("Please login first!");
         window.location.href = "login.html";
         return;
     }
-    
-    // Initial page data load
+
+    const saveBtn = document.getElementById("save-all-budgets-btn");
+
+    if (saveBtn) {
+        saveBtn.addEventListener("click", saveAllCategoryBudgets);
+    }
+
     await loadBudgetPageData(userId);
 });
 
@@ -238,7 +244,7 @@ window.saveAllCategoryBudgets = async function () {
             }
         }
 
-        alert("All category budgets updated successfully! 🎯");
+       
 
         // Backend se fresh data reload
         const userId = localStorage.getItem("currentUserId");
@@ -248,7 +254,7 @@ window.saveAllCategoryBudgets = async function () {
 
         console.error("Category Budget Save Error:", error);
 
-        alert("Category budget save nahi hua. Backend check karo.");
+        alert("Error saving category budgets: " + (error.message || "Server error"));
     }
 };
 
@@ -393,7 +399,7 @@ window.saveModalBudget = async function () {
         }
 
         
-alert("Budget successfully updated! 🎯");
+
 
 window.closeBudgetModal();
 
@@ -408,3 +414,4 @@ await loadBudgetPageData(userId);
         );
     }
 };
+

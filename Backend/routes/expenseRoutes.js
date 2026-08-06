@@ -6,37 +6,51 @@ const Expense = require('../model/expense');
 const verifyToken = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
-// 1. ADD EXPENSE API
-router.post('/add-expense', verifyToken, async (req, res) => {
+router.post('/add-expense', async (req, res) => {
     try {
         console.log("Received expense data:", req.body);
 
-        const expenseData = {
-            ...req.body,
-            userId: req.user.id
-        };
+        const {
+            userId,
+            type,
+            amount,
+            category,
+            paymentMode,
+            date,
+            description
+        } = req.body;
 
-        const newRecord = new Expense(expenseData);
+        const newRecord = new Expense({
+            userId: userId,
+            type: type,
+            title: description || category || "Expense",
+            amount: Number(amount),
+            category: category,
+            payment: paymentMode,
+            date: date || new Date().toISOString().split('T')[0]
+        });
 
-        await newRecord.save();
+        const savedExpense = await newRecord.save();
+
+        console.log("✅ Expense saved:", savedExpense);
 
         res.status(201).json({
             success: true,
             message: "Expense added successfully!",
-            expense: newRecord
+            expense: savedExpense
         });
 
-    }catch (error) {
-    console.error("ERROR DETAILS:", error);
+    } catch (error) {
+        console.error("🔥 ACTUAL ERROR:", error);
 
-    res.status(500).json({
-    success: false,
-    message: error.message,
-    error: error
+        res.status(500).json({
+            success: false,
+            message: error.message,
+            name: error.name,
+            errors: error.errors
+        });
+    }
 });
-}
-});
-
 // 2. GET USER EXPENSES API
 router.get('/:userId', async (req, res) => {
     try {
@@ -78,4 +92,31 @@ if (upload && typeof upload.single === 'function') {
     });
 }
 
+router.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedExpense = await Expense.findByIdAndDelete(id);
+
+        if (!deletedExpense) {
+            return res.status(404).json({
+                success: false,
+                message: "Expense not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Expense deleted successfully"
+        });
+
+    } catch (error) {
+        console.error("Delete Expense Error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
 module.exports = router;

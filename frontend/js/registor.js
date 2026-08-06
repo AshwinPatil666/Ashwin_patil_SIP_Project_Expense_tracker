@@ -68,7 +68,7 @@ localStorage.setItem("token", result.token);
         }
     } catch (error) {
         console.error("Register Error:", error);
-        alert("Render server waking up or unreachable. Testing fallback activated.");
+        alert(" Server waking up or unreachable. Testing fallback activated.");
 
       
         localStorage.setItem("userName", userName);

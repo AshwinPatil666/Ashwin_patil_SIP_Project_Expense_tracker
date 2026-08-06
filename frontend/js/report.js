@@ -279,7 +279,7 @@ async function exportToPDF() {
     const userName = localStorage.getItem("userName") || "Valued User";
 
     if (!allTransactions || allTransactions.length === 0) {
-        alert("Export karne ke liye koi transaction data nahi hai.");
+        alert("No transaction data available to export.");
         return;
     }
 
