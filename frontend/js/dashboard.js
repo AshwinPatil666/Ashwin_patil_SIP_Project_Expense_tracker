@@ -199,47 +199,44 @@ async function loadDashboardData() {
         // ============================
         // EXPENSES FROM MONGODB
         // ============================
-        const token = localStorage.getItem("token");
+          // ============================
+// EXPENSES FROM MONGODB
+// ============================
 
-if (!token) {
+const expenseResponse = await fetch(
+    `https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/${userId}`,
+    {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }
+    }
+);
+
+const expenseData = await expenseResponse.json();
+
+console.log("Expenses API:", expenseResponse.status, expenseData);
+
+if (expenseResponse.status === 401 || expenseResponse.status === 403) {
+    localStorage.removeItem("token");
     alert("Session expired. Please login again.");
     window.location.href = "login.html";
     return;
 }
 
-const response = await fetch(
-    "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-    }
-);
+if (!expenseResponse.ok) {
+    console.error("Expense API failed:", expenseData);
+    return;
+}
 
-        const expenseData = await expenseResponse.json();
+transactions = Array.isArray(expenseData)
+    ? expenseData
+    : expenseData.expenses || [];
 
-        console.log("Expenses API:", expenseResponse.status, expenseData);
+globalTransactionsForCharts = transactions;
 
-        if (expenseResponse.status === 401 || expenseResponse.status === 403) {
-            localStorage.removeItem("token");
-            alert("Session expired. Please login again.");
-            window.location.href = "login.html";
-            return;
-        }
-
-        if (!expenseResponse.ok) {
-            console.error("Expense API failed:", expenseData);
-            return;
-        }
-
-        transactions = Array.isArray(expenseData)
-            ? expenseData
-            : expenseData.expenses || [];
-
-        globalTransactionsForCharts = transactions;
+       
 
         // ============================
         // BUDGET FROM MONGODB
