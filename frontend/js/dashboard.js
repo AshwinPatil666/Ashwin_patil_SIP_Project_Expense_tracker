@@ -556,7 +556,7 @@ async function handleAddTransaction(event) {
     const token = localStorage.getItem("token");
 
     if (!userId || !token) {
-        alert("Session expired. Please login again!");
+        alert("Please login again.");
         window.location.href = "login.html";
         return;
     }
@@ -569,6 +569,7 @@ async function handleAddTransaction(event) {
     const description =
         document.getElementById("trans-desc").value || category;
 
+    // IMPORTANT
     const payload = {
         userId,
         type,
@@ -580,8 +581,8 @@ async function handleAddTransaction(event) {
     };
 
     try {
-       const response = await fetch(
-    "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add-expense",
+        const response = await fetch(
+            "https://ashwin-patil-sip-project-expense-tracker.onrender.com/api/expenses/add-expense",
             {
                 method: "POST",
                 headers: {
@@ -594,36 +595,22 @@ async function handleAddTransaction(event) {
 
         const data = await response.json();
 
-        console.log("Add Expense Response:", response.status, data);
+        console.log("Add Expense:", response.status, data);
 
         if (!response.ok) {
-            if (response.status === 401 || response.status === 403) {
-                localStorage.removeItem("token");
-                alert("Session expired. Please login again.");
-                window.location.href = "login.html";
-                return;
-            }
-
-            alert(
-                `Failed (${response.status}): ` +
-                (data.message || data.error || "Failed to save transaction")
-            );
-
+            alert(`Failed (${response.status}): ${data.message || data.error}`);
             return;
         }
 
-        alert(
-            `${type === "income" ? "Income" : "Expense"} entry saved successfully! 🎉`
-        );
+        alert("Expense added successfully!");
 
         document.getElementById("expense-modal").style.display = "none";
         document.getElementById("expense-form").reset();
 
-        // MongoDB se fresh data reload
         await loadDashboardData();
 
     } catch (error) {
-        console.error("Save Transaction Error:", error);
+        console.error("Save Expense Error:", error);
         alert("Error: " + error.message);
     }
 }

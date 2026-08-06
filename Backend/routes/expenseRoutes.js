@@ -26,15 +26,15 @@ router.post('/add-expense', verifyToken, async (req, res) => {
             expense: newRecord
         });
 
-    } catch (error) {
-        console.error("Error occurred while adding expense:", error);
+    }catch (error) {
+    console.error("ERROR DETAILS:", error);
 
-        res.status(500).json({
-            success: false,
-            message: "Error occurred while adding expense.",
-            error: error.message
-        });
-    }
+    res.status(500).json({
+        success: false,
+        message: "Error occurred while adding expense.",
+        error: error.message
+    });
+}
 });
 
 // 2. GET USER EXPENSES API
