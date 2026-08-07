@@ -19,13 +19,13 @@ app.use(express.json());
 app.use(cors({
     origin: [
         "https://spendwise-61xx.onrender.com",
-        "http://localhost:5173"
+        "http://localhost:5173",
+        "http://127.0.0.1:5500"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
 }));
-
 
 // Current directory context (Supports both root and subfolder execution)
 const frontendPath = path.join(__dirname, 'frontend'); // Agar server.js root me hai
